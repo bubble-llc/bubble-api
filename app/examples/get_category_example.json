@@ -1,0 +1,22 @@
+[
+	{
+		"post_id": 2,
+		"username": "wsteggles1",
+		"category_name": "What’s happening?",
+		"content": "Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.\n\nCras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+		"comments": [2],
+		"votes": 0,
+		"zipcode": "78703",
+		"date_created": "3/3/2020"
+	},
+	{
+		"post_id": 8,
+		"username": "dhenrichs7",
+		"category_name": "What’s happening?",
+		"content": "Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.\n\nSed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.\n\nPellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.",
+		"comments": [6, 10],
+		"votes": 8,
+		"zipcode": "78703",
+		"date_created": "4/4/2020"
+	}
+]
