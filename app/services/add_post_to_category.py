@@ -5,7 +5,8 @@ import psycopg2.extras
 from decimal import Decimal
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-from app.queries import QUERY_CHECK_CONNECTION, QUERY_INSERT_POST_TO_CATEGORY
+# from app.queries import QUERY_CHECK_CONNECTION, QUERY_INSERT_POST_TO_CATEGORY
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_POST_TO_CATEGORY
 
 class AddPostService:
 	def __init__(self, service):
@@ -20,15 +21,10 @@ class AddPostService:
 			print('HTTP POST: /add_post_to_category')
 			print(req.media)
 			
-			if req.media['category_name'] == "What's_Happening?":
-				req.media['category_name'] = "What's happening?"
-			elif req.media['category_name'] == "Happy_Hour":
-				req.media['category_name'] = "Happy Hour"
-			
 			cursor = con.cursor()
 			cursor.execute(QUERY_INSERT_POST_TO_CATEGORY, (
-				req.media['username'],
-				req.media['category_name'],
+				req.media['user_id'],
+				req.media['category_id'],
 				req.media['title'],
 				req.media['content'],
 				Decimal(req.media['latitude']),

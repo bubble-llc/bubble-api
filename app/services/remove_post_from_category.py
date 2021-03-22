@@ -4,7 +4,8 @@ import psycopg2.extras
 import uuid
 from datetime import datetime
 from falcon.http_status import HTTPStatus
-from app.queries import QUERY_CHECK_CONNECTION, QUERY_REMOVE_POST_FROM_CATEGORY
+# from app.queries import QUERY_CHECK_CONNECTION, QUERY_REMOVE_POST_FROM_CATEGORY
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_REMOVE_POST_FROM_CATEGORY
 
 class RemovePostService:
 	def __init__(self, service):
@@ -22,7 +23,7 @@ class RemovePostService:
 			cursor.execute(QUERY_REMOVE_POST_FROM_CATEGORY, (
 				str(datetime.now(tz=timezone.utc)),
 				req.media['post_id'],
-				req.media['category_name']
+				req.media['category_id']
 				)
 			)
 			con.commit()

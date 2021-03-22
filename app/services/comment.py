@@ -3,7 +3,8 @@ import sys
 import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-from app.queries import QUERY_CHECK_CONNECTION, QUERY_INSERT_COMMENT, QUERY_GET_COMMENT
+# from app.queries import QUERY_CHECK_CONNECTION, QUERY_INSERT_COMMENT, QUERY_GET_COMMENT
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_COMMENT, QUERY_GET_COMMENT
 
 class CommentService:
 	def __init__(self, service):
@@ -22,9 +23,10 @@ class CommentService:
 			response.append(
 				{
 					'id': record[0],
-					'username': record[1],
+					'user_id': record[1],
 					'content': record[2],
-					'date_created': str(record[3])
+					'date_created': str(record[3]),
+					'username': record[4],
 					
 				}
 			)
@@ -43,10 +45,10 @@ class CommentService:
 			print(req.media)
 			
 			cursor.execute(QUERY_INSERT_COMMENT, (
-					req.media['post_id'],
-					req.media['username'],
+					req.media['user_id'],
 					req.media['content'],
-					datetime.now(tz=timezone.utc)
+					datetime.now(tz=timezone.utc),
+					req.media['post_id'],
 				)
 			)
 				

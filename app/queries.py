@@ -203,11 +203,11 @@ QUERY_UPVOTE_DOWNVOTE_POST = """
 """
 
 QUERY_INSERT_VOTE = """
-	INSERT INTO vote_table(
-		post_id,
-		username,
-		direction,
-		date_created
+	INSERT INTO "Post_User"(
+		"PostID",
+		"UserID",
+		"Direction",
+		"DateCreated"
 	)
 	VALUES (%s, %s, %s, %s);
 """

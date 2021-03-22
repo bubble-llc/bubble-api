@@ -4,7 +4,8 @@ import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
 from app.util.random_generator import RandomGenerator
-from app.queries import QUERY_CHECK_CONNECTION, QUERY_GET_USER, QUERY_INSERT_USER
+# from app.queries import QUERY_CHECK_CONNECTION, QUERY_GET_USER, QUERY_INSERT_USER
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_GET_USER, QUERY_INSERT_USER
 
 class UserService:
 	def __init__(self, service):
@@ -22,8 +23,9 @@ class UserService:
 			response.append(
 				{
 					'username': record[0],
-					'email': record[1],
-					'date_joined': str(record[2])
+					'user_id': str(record[1]),
+					'email': record[2],
+					'date_joined': str(record[3])
 				}
 			)
 		cursor.close()
