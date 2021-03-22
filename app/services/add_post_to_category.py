@@ -36,7 +36,7 @@ class AddPostService:
 			cursor.close()
 
 			resp.status = falcon.HTTP_200
-			resp.media = 'Successful upload of post to {}'.format(req.media['category_name'])
+			resp.media = 'Successful upload of post to {}'.format(req.media['category_id'])
 
 		except psycopg2.DatabaseError as e:
 			if con:
