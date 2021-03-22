@@ -30,7 +30,7 @@ QUERY_GET_USER_LIKED_POST = """
 		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
 	LEFT OUTER JOIN 
 		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
-	WHERE "Post_User"."UserID" = %s
+	WHERE "Post_User"."UserID" = %s AND "Post_User"."Direction" = 1
 	ORDER BY
 		"DateCreated" DESC;
 """
