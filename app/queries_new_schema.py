@@ -96,7 +96,7 @@ QUERY_GET_DELETED_POST = """
 """
 
 QUERY_GET_REPORTED_POST = """
-	SELECT 
+	SELECT DISTINCT
 		"Post"."PostID",
 		"Post"."UserID",
 		"Post"."CategoryID",
