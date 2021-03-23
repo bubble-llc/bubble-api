@@ -3,7 +3,6 @@ import sys
 import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-# from app.queries import QUERY_CHECK_CONNECTION, QUERY_INSERT_COMMENT, QUERY_GET_COMMENT
 from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_COMMENT, QUERY_GET_COMMENT
 
 class CommentService:

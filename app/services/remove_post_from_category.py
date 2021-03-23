@@ -4,7 +4,6 @@ import psycopg2.extras
 import uuid
 from datetime import datetime
 from falcon.http_status import HTTPStatus
-# from app.queries import QUERY_CHECK_CONNECTION, QUERY_REMOVE_POST_FROM_CATEGORY
 from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_REMOVE_POST_FROM_CATEGORY
 
 class RemovePostService:

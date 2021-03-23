@@ -3,7 +3,6 @@ import sys
 import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-# from app.queries import QUERY_CHECK_CONNECTION, QUERY_INSERT_VOTE, QUERY_UPDATE_VOTE, QUERY_UPVOTE_DOWNVOTE_POST
 from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_VOTE, QUERY_UPDATE_VOTE
 
 class VoteService:

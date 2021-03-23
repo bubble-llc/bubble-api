@@ -5,7 +5,6 @@ import psycopg2.extras
 from decimal import Decimal
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-# from app.queries import QUERY_CHECK_CONNECTION, QUERY_INSERT_POST_TO_CATEGORY
 from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_POST_TO_CATEGORY
 
 class AddPostService:

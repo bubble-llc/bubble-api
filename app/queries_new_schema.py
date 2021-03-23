@@ -125,6 +125,36 @@ QUERY_GET_REPORTED_POST = """
 		"DateCreated" DESC;
 """
 
+QUERY_GET_REPORTED_POST_REPORT = """
+	SELECT 
+		"Post"."PostID",
+		"Post"."UserID",
+		"Post"."CategoryID",
+		"Post"."PostTitle",
+		"Post"."PostContent",
+		"Post"."Latitude",
+		"Post"."Longitude",
+		CASE WHEN "Post_User"."Direction" is NULL THEN false ELSE true END AS "IsVoted",
+		CASE WHEN "Post_User"."Direction" is NULL THEN 0 ELSE "Post_User"."Direction" END AS "PrevVote",
+		"Post"."DateCreated",
+		COALESCE(x.cnt,0) AS "Comments",
+		COALESCE(y.cnt,0) AS "Votes",
+		"Users"."UserName"
+	FROM 
+		"Post"
+	LEFT JOIN 
+		"Post_User" on "Post_User"."PostID" = "Post"."PostID"
+	LEFT JOIN 
+		"Users" on "Users"."UserID" = "Post"."UserID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = x."PostID"
+	WHERE "Post"."IsReported" = true
+	ORDER BY
+		"DateCreated" DESC;
+"""
+
 QUERY_GET_USER_CREATED_POST = """
 	SELECT 
 		"Post"."PostID",
@@ -169,7 +199,7 @@ QUERY_GET_USER = """
 """
 
 QUERY_GET_COMMENT = """
-	Select
+	SELECT
 		pc."PostCommentID",
 		pc."UserID",
 		pc."CommentContent",
@@ -231,6 +261,34 @@ QUERY_INSERT_VOTE = """
 	VALUES (%s, %s, %s, %s);
 """
 
+QUERY_INSERT_FEEDBACK = """
+	INSERT INTO "Feedback"(
+		"UserID",
+		"FeedbackContent",
+		"Latitude",
+		"Longitude",
+		"DateCreated"
+	)
+	VALUES (%s, %s, %s, %s, %s);
+"""
+
+QUERY_GET_FEEDBACK = """
+	SELECT
+		"FeedbackID",
+		"UserID",
+		"UserCommentedID",
+		"FeedbackContent",
+		"FeedbackComment",
+		"Latitude",
+		"Longitude",
+		"DateCreated",
+		"DateModified"
+	FROM
+		"Feedback"
+	WHERE
+		"IsActive" = true
+"""
+
 QUERY_UPDATE_VOTE = """
 	UPDATE 
 		"Post_User"
@@ -242,13 +300,21 @@ QUERY_UPDATE_VOTE = """
 
 QUERY_UPDATE_REPORT_POST = """
 	DO $$
+	DECLARE PostReportID bigint;
 	BEGIN
 	INSERT INTO "PostReport"(
-            "UserID",
-            "ReportContent",
-            "DateCreated"
+			"UserID",
+			"ReportContent",
+			"DateCreated"
+		)
+		VALUES (%s, %s, %s)
+		returning "PostReportID" INTO PostReportID;
+
+	INSERT INTO "Post_PostReport"(
+            "PostID",
+            "PostReportID"
         )
-        VALUES (%s, %s, %s);
+        VALUES (%s, PostReportID);
 
 	UPDATE 
 		"Post"

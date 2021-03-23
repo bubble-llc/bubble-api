@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS "Post"(
 	"CategoryID" INT REFERENCES "Category",
 	"PostTitle" VARCHAR(256),
 	"PostContent" TEXT,
-    "ReportComment" TEXT,
 	"Latitude" REAL,
 	"Longitude" REAL,
 	"DateCreated" timestamptz,
@@ -114,7 +113,7 @@ CREATE TABLE IF NOT EXISTS "Post_PostReport"(
 CREATE TABLE IF NOT EXISTS "Feedback"(
 	"FeedbackID" BIGSERIAL PRIMARY KEY,
 	"UserID" BIGINT REFERENCES "Users",
-	"UserIDModified" BIGINT REFERENCES "Users",
+	"UserCommentedID" BIGINT REFERENCES "Users",
 	"FeedbackContent" TEXT,
 	"FeedbackComment" TEXT,
 	"Latitude" REAL,

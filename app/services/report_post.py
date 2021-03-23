@@ -4,7 +4,7 @@ import sys
 import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_GET_REPORTED_POST
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_GET_REPORTED_POST, QUERY_UPDATE_REPORT_POST
 
 class ReportPostService:
 	def __init__(self, service):
@@ -54,8 +54,8 @@ class ReportPostService:
 		print(response)
 		resp.status = falcon.HTTP_200
 		resp.media = response
-
-    def on_post(self, req, resp):
+		
+	def on_post(self, req, resp):
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		
@@ -64,21 +64,18 @@ class ReportPostService:
 			print(req.media)
 			
 			cursor = con.cursor()
-			cursor.execute(QUERY_INSERT_POST_TO_CATEGORY, (
+			cursor.execute(QUERY_UPDATE_REPORT_POST, (
 				req.media['user_id'],
-				req.media['category_id'],
-				req.media['title'],
 				req.media['content'],
-				Decimal(req.media['latitude']),
-				Decimal(req.media['longitude']),
-				datetime.now(tz=timezone.utc)
+				datetime.now(tz=timezone.utc),
+				req.media['post_id'],
+				req.media['post_id']
 				)
 			)
 			con.commit()
 			cursor.close()
 
 			resp.status = falcon.HTTP_200
-			resp.media = 'Successful upload of post to {}'.format(req.media['category_id'])
 		except psycopg2.DatabaseError as e:
 			if con:
 				con.rollback()
