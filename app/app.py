@@ -11,6 +11,7 @@ from app.services.comment import CommentService
 from app.services.user import UserService
 from app.services.user_liked_post import UserLikedPostService
 from app.services.email_validation import EmailValidationService
+from app.services.user_created_post import UserCreatedPostService
 
 
 class Service:
@@ -29,6 +30,7 @@ def start_service():
 	user_service = UserService(service)
 	user_liked_post_service = UserLikedPostService(service)
 	email_validation_service = EmailValidationService(service)
+	user_created_post_service = UserCreatedPostService(service)
 
 	app = falcon.API(middleware=[HandleCORS()])
 	app.add_route('/add_post_to_category', add_post_service)
@@ -39,6 +41,7 @@ def start_service():
 	app.add_route('/user', user_service)
 	app.add_route('/user_liked_post', user_liked_post_service)
 	app.add_route('/email_validation', email_validation_service)
+	app.add_route('/user_created_post', user_created_post_service)
 	return app
 
 class HandleCORS(object):

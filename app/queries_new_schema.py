@@ -113,7 +113,7 @@ QUERY_GET_REPORTED_POST = """
 	FROM 
 		"Post"
 	LEFT JOIN 
-		"Post_User" on "Post_User"."PostID" = "Post"."PostID" AND "Post_User"."UserID" = %s
+		"Post_User" on "Post_User"."PostID" = "Post"."PostID"
 	LEFT JOIN 
 		"Users" on "Users"."UserID" = "Post"."UserID"
 	LEFT OUTER JOIN 
@@ -121,6 +121,36 @@ QUERY_GET_REPORTED_POST = """
 	LEFT OUTER JOIN 
 		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = x."PostID"
 	WHERE "Post"."IsReported" = true
+	ORDER BY
+		"DateCreated" DESC;
+"""
+
+QUERY_GET_USER_CREATED_POST = """
+	SELECT 
+		"Post"."PostID",
+		"Post"."UserID",
+		"Post"."CategoryID",
+		"Post"."PostTitle",
+		"Post"."PostContent",
+		"Post"."Latitude",
+		"Post"."Longitude",
+		CASE WHEN "Post_User"."Direction" is NULL THEN false ELSE true END AS "IsVoted",
+		CASE WHEN "Post_User"."Direction" is NULL THEN 0 ELSE "Post_User"."Direction" END AS "PrevVote",
+		"Post"."DateCreated",
+		COALESCE(x.cnt,0) AS "Comments",
+		COALESCE(y.cnt,0) AS "Votes",
+		"Users"."UserName"
+	FROM 
+		"Post"
+	LEFT JOIN 
+		"Post_User" on "Post_User"."PostID" = "Post"."PostID" AND "Post_User"."UserID" = %s
+	LEFT JOIN 
+		"Users" on "Users"."UserID" = "Post"."UserID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
+	WHERE "Post"."UserID" = %s
 	ORDER BY
 		"DateCreated" DESC;
 """
@@ -208,6 +238,24 @@ QUERY_UPDATE_VOTE = """
 		"Direction" = %s,
 		"DateModified" = %s
 	WHERE "PostID" = %s AND "UserID" = %s;
+"""
+
+QUERY_UPDATE_REPORT_POST = """
+	DO $$
+	BEGIN
+	INSERT INTO "PostReport"(
+            "UserID",
+            "ReportContent",
+            "DateCreated"
+        )
+        VALUES (%s, %s, %s);
+
+	UPDATE 
+		"Post"
+	SET
+		"IsReported" = true
+	WHERE "PostID" = %s;
+	END $$
 """
 
 QUERY_UPDATE_EMAIL_VERIFICATION = """

@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS "Post"(
 	"CategoryID" INT REFERENCES "Category",
 	"PostTitle" VARCHAR(256),
 	"PostContent" TEXT,
+    "ReportComment" TEXT,
 	"Latitude" REAL,
 	"Longitude" REAL,
 	"DateCreated" timestamptz,
@@ -75,13 +76,13 @@ CREATE TABLE IF NOT EXISTS "PostComment"(
 	"DateCreated" timestamptz,
 	"IsActive" BOOLEAN DEFAULT true
 );
-
 /**
 	1) The only comments allowed would be comments that had a null for ParentPostCommentID
 	2) By building a cross ref table here, this allows a comment to a comment if you ever go down that path
 	3) This model is tall, so with recursion, depending on pestgres limits, you can have that many branches, MS SQL 
 	   is 32,767 branches, so I doubt you would ever get that far.
 **/
+
 CREATE TABLE IF NOT EXISTS "Post_PostComment"(
 	"PostID" BIGINT,
 	"PostCommentID" BIGINT,
@@ -93,10 +94,32 @@ CREATE TABLE IF NOT EXISTS "Post_PostComment"(
 	2) No need to have voteID since it will not be referenced
 	3) This model prevents a user to have more than 1 vote per post
 **/
-CREATE TABLE IF NOT EXISTS "Post_User"(
-	"PostID" BIGINT REFERENCES "Post",
+
+CREATE TABLE IF NOT EXISTS "PostReport"(
+	"PostReportID" BIGSERIAL PRIMARY KEY,
+	"PostReportKey" UUID NOT NULL DEFAULT uuid_generate_v4(),
+	"ParentPostReportID" BIGINT NULL REFERENCES "PostReport",
 	"UserID" BIGINT REFERENCES "Users",
-	"Direction" INT NOT NULL,
+	"ReportContent" TEXT,
+	"DateCreated" timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS "Post_PostReport"(
+	"PostID" BIGINT,
+	"PostReportID" BIGINT,
+	PRIMARY KEY ("PostID", "PostReportID"),
+    UNIQUE ("PostReportID")
+);
+
+CREATE TABLE IF NOT EXISTS "Feedback"(
+	"FeedbackID" BIGSERIAL PRIMARY KEY,
+	"UserID" BIGINT REFERENCES "Users",
+	"UserIDModified" BIGINT REFERENCES "Users",
+	"FeedbackContent" TEXT,
+	"FeedbackComment" TEXT,
+	"Latitude" REAL,
+	"Longitude" REAL,
+    "IsActive" BOOLEAN DEFAULT true,
 	"DateCreated" timestamptz NOT NULL,
 	"DateModified" timestamptz
 );
