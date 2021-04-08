@@ -217,8 +217,9 @@ QUERY_GET_COMMENT = """
 	LEFT OUTER JOIN 
 		(SELECT "PostCommentID", SUM("Direction") cnt FROM "Comment_User" GROUP BY "PostCommentID") cu ON pc."PostCommentID" = cu."PostCommentID"
 	WHERE
-		p."PostID" = %s;
-		
+		p."PostID" = %s
+	ORDER BY
+		pc."DateCreated" DESC;
 """
 
 QUERY_INSERT_POST_TO_CATEGORY = """

@@ -285,6 +285,19 @@ INSERT INTO "Users"
 VALUES
     ('JJ_24', 2, 'password', 'test21@gmail.com', '1234', 'true', NOW());
 
+INSERT INTO "Users"
+    (
+    "UserName",
+    "UserTypeID",
+    "UserPassword",
+    "Email",
+    "ValidationCode",
+    "IsValidated",
+    "DateCreated"
+    )
+VALUES
+    ('TheBigSheesh', 1, 'secure', 'neil@bubble.llc', '1234', 'true', NOW());
+
 INSERT INTO "CategoryType"
     (
     "CategoryTypeDescription"
