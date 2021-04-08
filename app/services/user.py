@@ -23,8 +23,10 @@ class UserService:
 				{
 					'username': record[0],
 					'user_id': str(record[1]),
-					'email': record[2],
-					'date_joined': str(record[3])
+					'user_type': record[2],
+					'email': record[3],
+					'date_joined': str(record[4]),
+					'default_category_id': str(record[5])
 				}
 			)
 		cursor.close()
@@ -43,6 +45,7 @@ class UserService:
 			cursor = con.cursor()
 			cursor.execute(QUERY_INSERT_USER, (
 				req.media['username'],
+				req.media['user_type'],
 				req.media['password'],
 				req.media['email'],
 				random_str,

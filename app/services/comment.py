@@ -12,7 +12,7 @@ class CommentService:
 	
 	def on_get(self, req, resp):
 		print('HTTP GET: /comment')
-		
+		print(req.params)
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -26,6 +26,7 @@ class CommentService:
 					'content': record[2],
 					'date_created': str(record[3]),
 					'username': record[4],
+					'votes': record[5],
 					
 				}
 			)

@@ -12,9 +12,16 @@ CREATE TABLE IF NOT EXISTS "CategoryType"(
 COMMENT ON COLUMN "CategoryType"."CategoryTypeDescription" is 'Description of a type of category';
 COMMENT ON COLUMN "CategoryType"."IsActive" is 'Flag uses to turn on and off category types';
 
+CREATE TABLE IF NOT EXISTS "UserType"(
+	"UserTypeID" BIGSERIAL PRIMARY KEY,
+	"UserTypeName" CITEXT NOT NULL UNIQUE,
+	"IsActive" BOOLEAN DEFAULT true
+);
+
 CREATE TABLE IF NOT EXISTS "Users"(
 	"UserID" BIGSERIAL PRIMARY KEY,
 	"UserKey" UUID NOT NULL DEFAULT uuid_generate_v4(),
+	"UserTypeID" BIGINT REFERENCES "UserType",
 	"UserName" CITEXT NOT NULL UNIQUE,
 	"UserPassword" VARCHAR(256) NOT NULL,
 	"Email" VARCHAR(256) NOT NULL UNIQUE,
@@ -26,7 +33,8 @@ CREATE TABLE IF NOT EXISTS "Users"(
 	"DateValidated" timestamptz,
 	"DateLocked" timestamptz,
 	"LoggedInCount" INT DEFAULT(0),
-	"FailedAttemptCount" INT DEFAULT(0)
+	"FailedAttemptCount" INT DEFAULT(0),
+	"DefaultCategoryID" INT DEFAULT(1)
 );
 COMMENT ON COLUMN "Users"."UserKey" is 'Key used for external selection of user';
 COMMENT ON COLUMN "Users"."UserName" is 'Username for user';
@@ -36,7 +44,6 @@ COMMENT ON COLUMN "Users"."IsActive" is 'Is user active';
 COMMENT ON COLUMN "Users"."IsValidated" is 'Did user validate email';
 COMMENT ON COLUMN "Users"."IsLocked" is 'Is user account locked';
 COMMENT ON COLUMN "Users"."ValidationCode" is 'Code used for user to validate signup';
-
 
 CREATE TABLE IF NOT EXISTS "Category"(
 	"CategoryID" SERIAL PRIMARY KEY,
@@ -93,6 +100,22 @@ CREATE TABLE IF NOT EXISTS "Post_PostComment"(
 	2) No need to have voteID since it will not be referenced
 	3) This model prevents a user to have more than 1 vote per post
 **/
+
+CREATE TABLE IF NOT EXISTS "Post_User"(
+	"PostID" BIGINT REFERENCES "Post",
+	"UserID" BIGINT REFERENCES "Users",
+	"Direction" INT NOT NULL,
+	"DateCreated" timestamptz NOT NULL,
+	"DateModified" timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS "Comment_User"(
+	"PostCommentID" BIGINT REFERENCES "PostComment",
+	"UserID" BIGINT REFERENCES "Users",
+	"Direction" INT NOT NULL,
+	"DateCreated" timestamptz NOT NULL,
+	"DateModified" timestamptz
+);
 
 CREATE TABLE IF NOT EXISTS "PostReport"(
 	"PostReportID" BIGSERIAL PRIMARY KEY,

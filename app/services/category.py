@@ -13,7 +13,7 @@ class CategoryService:
 
 	def on_get(self, req, resp):
 		print('HTTP GET: /category')
-
+		print(req.params)
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)

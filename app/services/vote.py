@@ -3,7 +3,7 @@ import sys
 import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_VOTE, QUERY_UPDATE_VOTE
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_POST_VOTE, QUERY_UPDATE_POST_VOTE, QUERY_INSERT_COMMENT_VOTE, QUERY_UPDATE_COMMENT_VOTE
 
 class VoteService:
 	def __init__(self, service):
@@ -17,28 +17,47 @@ class VoteService:
 			print('HTTP POST: /vote')
 			cursor = con.cursor()
 			print(req.media)
-			
-			if req.media['is_voted'] == False:
-				cursor.execute(QUERY_INSERT_VOTE, (
-						req.media['post_id'],
-						req.media['username'],
+			if req.media['vote_type'] == "post":
+				if req.media['is_voted'] == False:
+					cursor.execute(QUERY_INSERT_POST_VOTE, (
+							req.media['post_id'],
+							req.media['username'],
+							req.media['direction'],
+							datetime.now(tz=timezone.utc)
+						)
+					)
+				else:
+					cursor.execute(QUERY_UPDATE_POST_VOTE, (
 						req.media['direction'],
-						datetime.now(tz=timezone.utc)
+						datetime.now(tz=timezone.utc),
+						req.media['post_id'],
+						req.media['username']
+						)
 					)
-				)
-			else:
-				cursor.execute(QUERY_UPDATE_VOTE, (
-					req.media['direction'],
-					datetime.now(tz=timezone.utc),
-					req.media['post_id'],
-					req.media['username']
+			elif req.media['vote_type'] == "comment":
+				if req.media['is_voted'] == False:
+					cursor.execute(QUERY_INSERT_COMMENT_VOTE, (
+							req.media['comment_id'],
+							req.media['username'],
+							req.media['direction'],
+							datetime.now(tz=timezone.utc)
+						)
 					)
-				)
-				
+				else:
+					cursor.execute(QUERY_UPDATE_COMMENT_VOTE, (
+						req.media['direction'],
+						datetime.now(tz=timezone.utc),
+						req.media['comment_id'],
+						req.media['username']
+						)
+					)
 			con.commit()
 
 			resp.status = falcon.HTTP_200
-			resp.media = 'Successful vote of post: {}'.format(req.media['post_id'])
+			if req.media['vote_type'] == "post":
+				resp.media = 'Successful vote of post: {}'.format(req.media['post_id'])
+			elif req.media['vote_type'] == "comment":
+				resp.media = 'Successful vote of comment: {}'.format(req.media['comment_id'])
 
 		except psycopg2.DatabaseError as e:
 			if con:
