@@ -31,8 +31,12 @@ class UserService:
 			)
 		cursor.close()
 		
-		resp.status = falcon.HTTP_200
-		resp.media = response
+		if len(response) == 0:
+			resp.status = falcon.HTTP_401
+			resp.media = "Invalid login credentials"
+		else:
+			resp.status = falcon.HTTP_200
+			resp.media = response
 		
 	def on_post(self, req, resp):
 		self.service.dbconnection.init_db_connection()
