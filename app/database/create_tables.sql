@@ -1,5 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "citext";
+CREATE EXTENSION IF NOT EXISTS "postgis";
 /* 
 	I added Category Type so that if you wanted to do a report and group categories, this would be an 
 	easy way to do that.  If not, can always remove table and foreign key

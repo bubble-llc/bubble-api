@@ -25,7 +25,7 @@ class EmailServer:
 		print(verification_link)
 		msg = MIMEMultipart("alternative")
 		msg['Subject'] = "Bubble Email Validation"
-		msg['From'] = self.config['email']
+		msg['From'] = "Bubble Support <{}>".format(self.config['email'])
 		msg['To'] = email
 		
 		
