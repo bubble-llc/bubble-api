@@ -375,3 +375,19 @@ QUERY_INSERT_COMMENT = """
         VALUES (%s, PostCommentID);
     END $$
 """
+
+QUERY_INSERT_PASSWORD_RESET = """
+	UPDATE 
+		"Users"
+	SET
+		"PasswordValidationCode" = %s
+	WHERE "Email" = %s;
+"""
+
+QUERY_UPDATE_PASSWORD_RESET = """
+	UPDATE 
+		"Users"
+	SET
+		"UserPassword" = %s
+	WHERE "Email" = %s AND "PasswordValidationCode" = %s;
+"""

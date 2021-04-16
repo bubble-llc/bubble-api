@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS "Users"(
 	"IsValidated" BOOLEAN DEFAULT false,
 	"IsLocked" BOOLEAN DEFAULT false,
 	"ValidationCode" VARCHAR(256) NOT NULL,
+	"PasswordValidationCode" VARCHAR(256),
 	"DateCreated" timestamptz,
 	"DateValidated" timestamptz,
 	"DateLocked" timestamptz,

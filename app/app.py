@@ -14,6 +14,8 @@ from app.services.email_validation import EmailValidationService
 from app.services.user_created_post import UserCreatedPostService
 from app.services.feedback import FeedbackService
 from app.services.report_post import ReportPostService
+from app.services.password_reset import PasswordResetService
+from app.services.validate_password_reset import ValidatePasswordResetService
 
 
 class Service:
@@ -35,6 +37,8 @@ def start_service():
 	user_created_post_service = UserCreatedPostService(service)
 	feedback_service = FeedbackService(service)
 	report_post_service = ReportPostService(service)
+	password_reset = PasswordResetService(service)
+	validate_password_reset = ValidatePasswordResetService(service)
 
 	app = falcon.API(middleware=[HandleCORS()])
 	app.add_route('/add_post_to_category', add_post_service)
@@ -48,6 +52,8 @@ def start_service():
 	app.add_route('/user_created_post', user_created_post_service)
 	app.add_route('/feedback', feedback_service)
 	app.add_route('/report_post', report_post_service)
+	app.add_route('/password_reset', password_reset)
+	app.add_route('/validate_password_reset', validate_password_reset)
 	return app
 
 class HandleCORS(object):
