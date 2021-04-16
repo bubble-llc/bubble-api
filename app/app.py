@@ -52,7 +52,7 @@ def start_service():
 	app.add_route('/user_created_post', user_created_post_service)
 	app.add_route('/feedback', feedback_service)
 	app.add_route('/report_post', report_post_service)
-	app.add_route('/"password_reset"', password_reset)
+	app.add_route('/password_reset', password_reset)
 	app.add_route('/validate_password_reset', validate_password_reset)
 	return app
 
