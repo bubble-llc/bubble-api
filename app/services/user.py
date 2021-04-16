@@ -37,7 +37,7 @@ class UserService:
 	def on_post(self, req, resp):
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
-		random_str = RandomGenerator.get_random_alphanumeric_string(10)
+		random_str = RandomGenerator.get_random_numeric_string(6)
 		
 		try:
 			print('HTTP POST: /user')
