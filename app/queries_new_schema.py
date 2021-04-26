@@ -391,3 +391,38 @@ QUERY_UPDATE_PASSWORD_RESET = """
 		"UserPassword" = %s
 	WHERE "Email" = %s AND "PasswordValidationCode" = %s;
 """
+
+QUERY_UPDATE_DEFAULT_CATEGORY = """
+	UPDATE 
+		"Users"
+	SET
+		"DefaultCategoryID" = %s
+	WHERE "UserName" = %s;
+"""
+
+QUERY_INSERT_TWILO_SMS = """
+	INSERT INTO "TwilioLookup"(
+		"SID",
+		"PhoneNumber",
+		"DateCreated"
+	)
+	VALUES (%s, %s, %s);
+"""
+
+QUERY_GET_TWILO_SMS = """
+	SELECT
+		"SID"
+	FROM
+		"TwilioLookup"
+	WHERE
+		"PhoneNumber" = %s
+"""
+
+QUERY_UPDATE_TWILO_SMS = """
+	UPDATE 
+		"TwilioLookup"
+	SET
+		"IsActive" = false
+	WHERE
+		"SID" = %s
+"""

@@ -2,6 +2,7 @@ import falcon
 import logging
 from falcon.http_status import HTTPStatus
 from app.util.db_connection import DbConnection
+from app.util.twilio_connection import TwilioConnection
 from app.util.email_server import EmailServer
 from app.services.add_post_to_category import AddPostService
 from app.services.remove_post_from_category import RemovePostService
@@ -16,6 +17,9 @@ from app.services.feedback import FeedbackService
 from app.services.report_post import ReportPostService
 from app.services.password_reset import PasswordResetService
 from app.services.validate_password_reset import ValidatePasswordResetService
+from app.services.twilio_sms import TwilioSMS
+from app.services.validate_twilio_sms import ValidateTwilioSMS
+from app.services.set_default_category import SetDefaultCategoryService
 
 
 class Service:
@@ -23,6 +27,7 @@ class Service:
 		print('Initializing Bubble Service...')
 		self.dbconnection = DbConnection('db_credentials.yaml')
 		self.email_server = EmailServer('email_credentials.yaml')
+		self.twilio_connection = TwilioConnection('twilio_credentials.yaml')
 
 def start_service():
 	service = Service()
@@ -39,6 +44,9 @@ def start_service():
 	report_post_service = ReportPostService(service)
 	password_reset = PasswordResetService(service)
 	validate_password_reset = ValidatePasswordResetService(service)
+	set_default_category = SetDefaultCategoryService(service)
+	# twilio_sms = TwilioSMS(service)
+	# validate_twilio_sms = ValidateTwilioSMS(service)
 
 	app = falcon.API(middleware=[HandleCORS()])
 	app.add_route('/add_post_to_category', add_post_service)
@@ -54,6 +62,9 @@ def start_service():
 	app.add_route('/report_post', report_post_service)
 	app.add_route('/password_reset', password_reset)
 	app.add_route('/validate_password_reset', validate_password_reset)
+	app.add_route('/set_default_category', set_default_category)
+	# app.add_route('/twilio_sms', twilio_sms)
+	# app.add_route('/validate_twilio_sms', validate_twilio_sms)
 	return app
 
 class HandleCORS(object):

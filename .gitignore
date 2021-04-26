@@ -17,6 +17,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.vscode
 
 npm-debug.log*
 yarn-debug.log*
@@ -25,6 +26,7 @@ yarn-error.log*
 # configs
 db_credentials.yaml
 email_credentials.yaml
+twilio_credentials.yaml
 
 # design 
 design
