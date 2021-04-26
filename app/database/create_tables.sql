@@ -31,12 +31,13 @@ CREATE TABLE IF NOT EXISTS "Users"(
 	"IsLocked" BOOLEAN DEFAULT false,
 	"ValidationCode" VARCHAR(256) NOT NULL,
 	"PasswordValidationCode" VARCHAR(256),
+	"SMSValidationCode" VARCHAR(256),
 	"DateCreated" timestamptz,
 	"DateValidated" timestamptz,
 	"DateLocked" timestamptz,
 	"LoggedInCount" INT DEFAULT(0),
 	"FailedAttemptCount" INT DEFAULT(0),
-	"DefaultCategoryID" INT DEFAULT(1)
+	"DefaultCategoryID" INT DEFAULT(1) REFERENCES "Category"
 );
 COMMENT ON COLUMN "Users"."UserKey" is 'Key used for external selection of user';
 COMMENT ON COLUMN "Users"."UserName" is 'Username for user';
@@ -144,6 +145,14 @@ CREATE TABLE IF NOT EXISTS "Feedback"(
 	"Latitude" REAL,
 	"Longitude" REAL,
     "IsActive" BOOLEAN DEFAULT true,
+	"DateCreated" timestamptz NOT NULL,
+	"DateModified" timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS "TwilioLookup"(
+	"SID" VARCHAR(256) PRIMARY KEY,
+	"PhoneNumber" VARCHAR(256) UNIQUE,
+	"IsActive" BOOLEAN DEFAULT true,
 	"DateCreated" timestamptz NOT NULL,
 	"DateModified" timestamptz
 );

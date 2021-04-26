@@ -5,3 +5,4 @@ gunicorn==19.9.0
 pyyaml==5.1.2
 requests
 psycopg2-binary
+twilio
