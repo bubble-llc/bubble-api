@@ -205,17 +205,21 @@ QUERY_GET_COMMENT = """
 		pc."CommentContent",
 		pc."DateCreated",
 		u."UserName",
-		COALESCE(cu.cnt,0) AS "Votes"
+		COALESCE(cuv.cnt,0) AS "Votes",
+		CASE WHEN cu."Direction" is NULL THEN false ELSE true END AS "IsVoted",
+		CASE WHEN cu."Direction" is NULL THEN 0 ELSE cu."Direction" END AS "PrevVote"
 	FROM
 		"Post" p
 	INNER JOIN "Post_PostComment" ppc
 		ON p."PostID" = ppc."PostID"
 	INNER JOIN "PostComment" pc
 		ON ppc."PostCommentID" = pc."PostCommentID"
+	LEFT JOIN "Comment_User" cu
+		ON pc."PostCommentID" = cu."PostCommentID" AND "cu"."UserID" = %s
 	LEFT JOIN "Users" u
 		ON u."UserID" = pc."UserID"
 	LEFT OUTER JOIN 
-		(SELECT "PostCommentID", SUM("Direction") cnt FROM "Comment_User" GROUP BY "PostCommentID") cu ON pc."PostCommentID" = cu."PostCommentID"
+		(SELECT "PostCommentID", SUM("Direction") cnt FROM "Comment_User" GROUP BY "PostCommentID") cuv ON ppc."PostCommentID" = cuv."PostCommentID"
 	WHERE
 		p."PostID" = %s
 	ORDER BY
