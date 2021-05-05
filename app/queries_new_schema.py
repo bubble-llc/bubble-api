@@ -93,7 +93,7 @@ QUERY_GET_DELETED_POST = """
 		"DateCreated" DESC;
 """
 
-QUERY_GET_REPORTED_POST = """
+QUERY_GET_POST_REVIEW = """
 	SELECT DISTINCT
 		"Post"."PostID",
 		"Post"."UserID",
@@ -121,6 +121,30 @@ QUERY_GET_REPORTED_POST = """
 	WHERE "Post"."IsReported" = true
 	ORDER BY
 		"DateCreated" DESC;
+"""
+
+QUERY_GET_COMMENT_REVIEW = """
+	SELECT
+		pc."PostCommentID",
+		pc."UserID",
+		pc."CommentContent",
+		pc."DateCreated",
+		u."UserName",
+		COALESCE(cuv.cnt,0) AS "Votes",
+		CASE WHEN cu."Direction" is NULL THEN false ELSE true END AS "IsVoted",
+		CASE WHEN cu."Direction" is NULL THEN 0 ELSE cu."Direction" END AS "PrevVote"
+	FROM
+		"PostComment" pc
+	LEFT JOIN "Comment_User" cu
+		ON pc."PostCommentID" = cu."PostCommentID"
+	LEFT JOIN "Users" u
+		ON u."UserID" = pc."UserID"
+	LEFT OUTER JOIN 
+		(SELECT "PostCommentID", SUM("Direction") cnt FROM "Comment_User" GROUP BY "PostCommentID") cuv ON pc."PostCommentID" = cuv."PostCommentID"
+	WHERE
+		pc."IsReported" = true
+	ORDER BY
+		pc."DateCreated" DESC;
 """
 
 QUERY_GET_REPORTED_POST_REPORT = """
@@ -326,30 +350,38 @@ QUERY_GET_FEEDBACK = """
 		"IsActive" = true
 """
 
-QUERY_UPDATE_REPORT_POST = """
-	DO $$
-	DECLARE PostReportID bigint;
-	BEGIN
-	INSERT INTO "PostReport"(
+QUERY_UPDATE_POST_REVIEW = """
+	BEGIN;
+	INSERT INTO "PostContentReview"(
 			"UserID",
-			"ReportContent",
-			"DateCreated"
+			"ReviewContent",
+			"DateCreated",
+			"PostID"
 		)
-		VALUES (%s, %s, %s)
-		returning "PostReportID" INTO PostReportID;
-
-	INSERT INTO "Post_PostReport"(
-            "PostID",
-            "PostReportID"
-        )
-        VALUES (%s, PostReportID);
-
+		VALUES (%s, %s, %s, %s);
 	UPDATE 
 		"Post"
 	SET
 		"IsReported" = true
 	WHERE "PostID" = %s;
-	END $$
+	END
+"""
+
+QUERY_UPDATE_COMMENT_REVIEW = """
+	BEGIN;
+	INSERT INTO "CommentContentReview"(
+			"UserID",
+			"ReviewContent",
+			"DateCreated",
+			"PostCommentID"
+		)
+		VALUES (%s, %s, %s, %s);
+	UPDATE 
+		"PostComment"
+	SET
+		"IsReported" = true
+	WHERE "PostCommentID" = %s;
+	END
 """
 
 QUERY_UPDATE_EMAIL_VERIFICATION = """
@@ -429,4 +461,61 @@ QUERY_UPDATE_TWILO_SMS = """
 		"IsActive" = false
 	WHERE
 		"SID" = %s
+"""
+
+QUERY_GET_NOTIFCATIONS = """
+	SELECT 
+		n."NotificationID",
+		n."NotifcationTypeID",
+		n."NotifcationContent",
+		n."DateCreated"
+
+	FROM 
+		"Notification" n
+	WHERE n."IsViewed" = false AND "UserID" = %s
+	ORDER BY
+		n."DateCreated" DESC;
+"""
+
+QUERY_UPDATE_NOTIFCATIONS = """
+	UPDATE 
+		"Notification"
+	SET
+		"IsViewed" = true
+	WHERE
+		"NotificationID" = %s
+"""
+
+QUERY_INSERT_NOTIFCATIONS = """
+	INSERT INTO "Notification"(
+		"UserID",
+		"NotifcationTypeID",
+		"NotifcationContent",
+		"DateCreated"
+	)
+	VALUES (%s, %s, %s, %s);
+"""
+
+QUERY_INSERT_BLOCK_USER = """
+	INSERT INTO "BlockedUser"(
+		"UserID",
+		"BlockedUserID",
+		"BlockedReason",
+		"BlockedType",
+		"DateCreated"
+	)
+	VALUES (%s, %s, %s, %s, %s);
+"""
+
+QUERY_GET_BLOCK_USER = """
+	SELECT 
+		bu."BlockedUserID",
+		bu."BlockedReason",
+		bu."BlockedType"
+
+	FROM 
+		"BlockedUser" bu
+	WHERE bu."IsActive" = true AND bu."UserID" = %s
+	ORDER BY
+		bu."DateCreated" DESC;
 """

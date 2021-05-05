@@ -14,12 +14,13 @@ from app.services.user_liked_post import UserLikedPostService
 from app.services.email_validation import EmailValidationService
 from app.services.user_created_post import UserCreatedPostService
 from app.services.feedback import FeedbackService
-from app.services.report_post import ReportPostService
+from app.services.content_review import ContentReviewService
 from app.services.password_reset import PasswordResetService
 from app.services.validate_password_reset import ValidatePasswordResetService
 from app.services.twilio_sms import TwilioSMS
 from app.services.validate_twilio_sms import ValidateTwilioSMS
 from app.services.set_default_category import SetDefaultCategoryService
+from app.services.block_user import BlockUserService
 
 
 class Service:
@@ -41,10 +42,11 @@ def start_service():
 	email_validation_service = EmailValidationService(service)
 	user_created_post_service = UserCreatedPostService(service)
 	feedback_service = FeedbackService(service)
-	report_post_service = ReportPostService(service)
+	content_review_service = ContentReviewService(service)
 	password_reset = PasswordResetService(service)
 	validate_password_reset = ValidatePasswordResetService(service)
 	set_default_category = SetDefaultCategoryService(service)
+	block_user = BlockUserService(service)
 	# twilio_sms = TwilioSMS(service)
 	# validate_twilio_sms = ValidateTwilioSMS(service)
 
@@ -59,10 +61,11 @@ def start_service():
 	app.add_route('/email_validation', email_validation_service)
 	app.add_route('/user_created_post', user_created_post_service)
 	app.add_route('/feedback', feedback_service)
-	app.add_route('/report_post', report_post_service)
+	app.add_route('/content_review', content_review_service)
 	app.add_route('/password_reset', password_reset)
 	app.add_route('/validate_password_reset', validate_password_reset)
 	app.add_route('/set_default_category', set_default_category)
+	app.add_route('/block_user', block_user)
 	# app.add_route('/twilio_sms', twilio_sms)
 	# app.add_route('/validate_twilio_sms', validate_twilio_sms)
 	return app

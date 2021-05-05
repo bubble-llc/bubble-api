@@ -4,48 +4,29 @@ import sys
 import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_GET_REPORTED_POST, QUERY_UPDATE_REPORT_POST
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_GET_BLOCK_USER, QUERY_INSERT_BLOCK_USER
 
-class ReportPostService:
+class BlockUserService:
 	def __init__(self, service):
-		print('Initializing Report Post Service...')
+		print('Initializing Block User Service...')
 		self.service = service
 
 	def on_get(self, req, resp):
-		print('HTTP GET: /report_post')
+		print('HTTP GET: /block_user')
 		print(req.params)
 		
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_REPORTED_POST, )
+		cursor.execute(QUERY_GET_BLOCK_USER, (req.params['user_id'],))
 		
 		response = []
 		for record in cursor:
-			if record[5] is None:
-				latitude = 0.0
-			else:
-				latitude = record[5]
-				
-			if record[6] is None:
-				longitude = 0.0
-			else:
-				longitude = record[6]
 			response.append(
 				{
-					'id': record[0],
-					'user_id': record[1],
-					'category_id': record[2],
-					'title': record[3],
-					'content': record[4],
-					'latitude': latitude,
-					'longitude': longitude,
-					'is_voted': record[7],
-					'prev_vote': record[8],
-					'date_created': str(record[9]),
-					'comments': record[10],
-					'votes': record[11],
-					'username': record[12]
+					'blocked_user_id': record[0],
+					'blocked_reason': record[1],
+					'blocked_type': record[2]
 				}
 			)
 		
@@ -60,16 +41,16 @@ class ReportPostService:
 		con = self.service.dbconnection.connection
 		
 		try:
-			print('HTTP POST: /report_post')
+			print('HTTP POST: /block_user')
 			print(req.media)
 			
 			cursor = con.cursor()
-			cursor.execute(QUERY_UPDATE_REPORT_POST, (
+			cursor.execute(QUERY_INSERT_BLOCK_USER, (
 				req.media['user_id'],
-				req.media['content'],
-				datetime.now(tz=timezone.utc),
-				req.media['post_id'],
-				req.media['post_id']
+				req.media['blocked_user_id'],
+				req.media['blocked_reason'],
+				req.media['blocked_type'],
+				datetime.now(tz=timezone.utc)
 				)
 			)
 			con.commit()

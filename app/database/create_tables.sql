@@ -13,6 +13,18 @@ CREATE TABLE IF NOT EXISTS "CategoryType"(
 COMMENT ON COLUMN "CategoryType"."CategoryTypeDescription" is 'Description of a type of category';
 COMMENT ON COLUMN "CategoryType"."IsActive" is 'Flag uses to turn on and off category types';
 
+CREATE TABLE IF NOT EXISTS "Category"(
+	"CategoryID" SERIAL PRIMARY KEY,
+	"CategoryTypeID" SMALLSERIAL REFERENCES "CategoryType",
+	"CategoryTitle" VARCHAR(256),
+	"CategoryDescription" VARCHAR(256),
+	"IsActive" BOOLEAN DEFAULT true,
+	"DateCreated" timestamptz
+);
+COMMENT ON COLUMN "Category"."CategoryTitle" is 'Title or name of a category';
+COMMENT ON COLUMN "Category"."CategoryDescription" is 'Description of a category';
+COMMENT ON COLUMN "Category"."IsActive" is 'Flag uses to turn on and off categories';
+
 CREATE TABLE IF NOT EXISTS "UserType"(
 	"UserTypeID" BIGSERIAL PRIMARY KEY,
 	"UserTypeName" CITEXT NOT NULL UNIQUE,
@@ -48,18 +60,6 @@ COMMENT ON COLUMN "Users"."IsValidated" is 'Did user validate email';
 COMMENT ON COLUMN "Users"."IsLocked" is 'Is user account locked';
 COMMENT ON COLUMN "Users"."ValidationCode" is 'Code used for user to validate signup';
 
-CREATE TABLE IF NOT EXISTS "Category"(
-	"CategoryID" SERIAL PRIMARY KEY,
-	"CategoryTypeID" SMALLSERIAL REFERENCES "CategoryType",
-	"CategoryTitle" VARCHAR(256),
-	"CategoryDescription" VARCHAR(256),
-	"IsActive" BOOLEAN DEFAULT true,
-	"DateCreated" timestamptz
-);
-COMMENT ON COLUMN "Category"."CategoryTitle" is 'Title or name of a category';
-COMMENT ON COLUMN "Category"."CategoryDescription" is 'Description of a category';
-COMMENT ON COLUMN "Category"."IsActive" is 'Flag uses to turn on and off categories';
-
 CREATE TABLE IF NOT EXISTS "Post"(
 	"PostID" BIGSERIAL PRIMARY KEY,
 	"PostKey" UUID NOT NULL DEFAULT uuid_generate_v4(),
@@ -83,7 +83,10 @@ CREATE TABLE IF NOT EXISTS "PostComment"(
 	"UserID" BIGINT REFERENCES "Users",
 	"CommentContent" TEXT,
 	"DateCreated" timestamptz,
-	"IsActive" BOOLEAN DEFAULT true
+	"DateModified" timestamptz,
+	"IsActive" BOOLEAN DEFAULT true,
+	"IsReported" BOOLEAN DEFAULT false,
+	"IsEdited" BOOLEAN DEFAULT false
 );
 /**
 	1) The only comments allowed would be comments that had a null for ParentPostCommentID
@@ -120,21 +123,42 @@ CREATE TABLE IF NOT EXISTS "Comment_User"(
 	"DateModified" timestamptz
 );
 
-CREATE TABLE IF NOT EXISTS "PostReport"(
-	"PostReportID" BIGSERIAL PRIMARY KEY,
-	"PostReportKey" UUID NOT NULL DEFAULT uuid_generate_v4(),
-	"ParentPostReportID" BIGINT NULL REFERENCES "PostReport",
-	"UserID" BIGINT REFERENCES "Users",
-	"ReportContent" TEXT,
-	"DateCreated" timestamptz
-);
+/**
+	PostReport -> ContentReview
+	ContentType - Post/Comment
 
-CREATE TABLE IF NOT EXISTS "Post_PostReport"(
+	CrossRef table
+	- PostContentReview
+	- CommentContentReview
+		- 
+
+
+	CREATE TABLE IF NOT EXISTS "Post_PostReport"(
 	"PostID" BIGINT,
 	"PostReportID" BIGINT,
 	PRIMARY KEY ("PostID", "PostReportID"),
     UNIQUE ("PostReportID")
 );
+**/
+
+CREATE TABLE IF NOT EXISTS "PostContentReview"(
+	"PostContentReviewID" BIGSERIAL PRIMARY KEY,
+	"PostContentReviewKey" UUID NOT NULL DEFAULT uuid_generate_v4(),
+	"PostID" BIGINT NULL REFERENCES "Post",
+	"UserID" BIGINT REFERENCES "Users",
+	"ReviewContent" TEXT,
+	"DateCreated" timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS "CommentContentReview"(
+	"CommentContentReviewID" BIGSERIAL PRIMARY KEY,
+	"CommentContentReviewKey" UUID NOT NULL DEFAULT uuid_generate_v4(),
+	"PostCommentID" BIGINT NULL REFERENCES "PostComment",
+	"UserID" BIGINT REFERENCES "Users",
+	"ReviewContent" TEXT,
+	"DateCreated" timestamptz
+);
+
 
 CREATE TABLE IF NOT EXISTS "Feedback"(
 	"FeedbackID" BIGSERIAL PRIMARY KEY,
@@ -155,4 +179,29 @@ CREATE TABLE IF NOT EXISTS "TwilioLookup"(
 	"IsActive" BOOLEAN DEFAULT true,
 	"DateCreated" timestamptz NOT NULL,
 	"DateModified" timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS "Notification"(
+	"NotificationID" BIGSERIAL PRIMARY KEY,
+	"UserID" BIGINT REFERENCES "Users",
+	"NotifcationTypeID" VARCHAR(256),
+	"NotifcationContent " VARCHAR(256),
+	"IsViewed" BOOLEAN DEFAULT false,
+	"DateCreated" timestamptz NOT NULL,
+	"DateViewed" timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS "NotificationType"(
+	"NotifcationTypeID" BIGSERIAL PRIMARY KEY,
+	"NotifcationTypeName" VARCHAR(256)
+);
+
+CREATE TABLE IF NOT EXISTS "BlockedUser"(
+	"UserID" BIGINT NOT NULL REFERENCES "Users",
+	"BlockedUserID" BIGINT NOT NULL REFERENCES "Users",
+	"IsActive" BOOLEAN DEFAULT true,
+	"DateCreated" timestamptz NOT NULL,
+	"DateModified" timestamptz,
+	"BlockedReason" VARCHAR(256),
+	"BlockedType" VARCHAR(256)
 );
