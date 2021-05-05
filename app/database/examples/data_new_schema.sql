@@ -1,3 +1,60 @@
+INSERT INTO "CategoryType"
+    (
+    "CategoryTypeDescription"
+    )
+VALUES
+    ('Main Categories');
+
+INSERT INTO "Category"
+    (
+    "CategoryTypeID",
+    "CategoryTitle",
+    "CategoryDescription",
+    "DateCreated"
+    )
+VALUES
+    (1, 'Deals', '', NOW());
+
+INSERT INTO "Category"
+    (
+    "CategoryTypeID",
+    "CategoryTitle",
+    "CategoryDescription",
+    "DateCreated"
+    )
+VALUES
+    (1, 'Happy Hour', '', NOW());
+
+INSERT INTO "Category"
+    (
+    "CategoryTypeID",
+    "CategoryTitle",
+    "CategoryDescription",
+    "DateCreated"
+    )
+VALUES
+    (1, 'Recreation', '', NOW());
+
+INSERT INTO "Category"
+    (
+    "CategoryTypeID",
+    "CategoryTitle",
+    "CategoryDescription",
+    "DateCreated"
+    )
+VALUES
+    (1, 'What''s happening?', '', NOW());
+
+INSERT INTO "Category"
+    (
+    "CategoryTypeID",
+    "CategoryTitle",
+    "CategoryDescription",
+    "DateCreated"
+    )
+VALUES
+    (1, 'Misc', '', NOW());
+
 INSERT INTO "UserType"
     (
     "UserTypeName"
@@ -297,63 +354,6 @@ INSERT INTO "Users"
     )
 VALUES
     ('TheBigSheesh', 1, 'secure', 'neil@bubble.llc', '1234', 'true', NOW());
-
-INSERT INTO "CategoryType"
-    (
-    "CategoryTypeDescription"
-    )
-VALUES
-    ('Main Categories');
-
-INSERT INTO "Category"
-    (
-    "CategoryTypeID",
-    "CategoryTitle",
-    "CategoryDescription",
-    "DateCreated"
-    )
-VALUES
-    (1, 'Deals', '', NOW());
-
-INSERT INTO "Category"
-    (
-    "CategoryTypeID",
-    "CategoryTitle",
-    "CategoryDescription",
-    "DateCreated"
-    )
-VALUES
-    (1, 'Happy Hour', '', NOW());
-
-INSERT INTO "Category"
-    (
-    "CategoryTypeID",
-    "CategoryTitle",
-    "CategoryDescription",
-    "DateCreated"
-    )
-VALUES
-    (1, 'Recreation', '', NOW());
-
-INSERT INTO "Category"
-    (
-    "CategoryTypeID",
-    "CategoryTitle",
-    "CategoryDescription",
-    "DateCreated"
-    )
-VALUES
-    (1, 'What''s happening?', '', NOW());
-
-INSERT INTO "Category"
-    (
-    "CategoryTypeID",
-    "CategoryTitle",
-    "CategoryDescription",
-    "DateCreated"
-    )
-VALUES
-    (1, 'Misc', '', NOW());
 
 INSERT INTO "Post"
     (
