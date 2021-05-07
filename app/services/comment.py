@@ -16,7 +16,7 @@ class CommentService:
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_COMMENT, (req.params['user_id'], req.params['post_id']))
+		cursor.execute(QUERY_GET_COMMENT, (req.params['user_id'], req.params['post_id'], req.params['user_id']))
 		response = []
 		for record in cursor:
 			response.append(

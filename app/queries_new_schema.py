@@ -58,7 +58,7 @@ QUERY_GET_CATEGORY = """
 		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
 	LEFT OUTER JOIN 
 		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
-	WHERE "Post"."CategoryID" = %s AND "Post"."IsActive" = true AND "Post"."IsReported" = false
+	WHERE "Post"."CategoryID" = %s AND "Post"."IsActive" = true AND "Post"."IsReported" = false AND "Post"."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s)
 	ORDER BY
 		"DateCreated" DESC;
 """
@@ -245,7 +245,7 @@ QUERY_GET_COMMENT = """
 	LEFT OUTER JOIN 
 		(SELECT "PostCommentID", SUM("Direction") cnt FROM "Comment_User" GROUP BY "PostCommentID") cuv ON ppc."PostCommentID" = cuv."PostCommentID"
 	WHERE
-		p."PostID" = %s
+		p."PostID" = %s AND pc."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s)
 	ORDER BY
 		pc."DateCreated" DESC;
 """

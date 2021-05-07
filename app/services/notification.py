@@ -6,13 +6,13 @@ from falcon.http_status import HTTPStatus
 from app.util.random_generator import RandomGenerator
 from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_GET_NOTIFCATIONS, QUERY_UPDATE_NOTIFCATIONS
 
-class NotifcaitonService:
+class NotificationService:
 	def __init__(self, service):
-		print('Initializing Notifcaiton Service...')
+		print('Initializing Notification Service...')
 		self.service = service
 
 	def on_get(self, req, resp):
-		print('HTTP GET: /notifcaiton')
+		print('HTTP GET: /notification')
 		print(req.params)
 		self.service.dbconnection.init_db_connection()
 		cursor = self.service.dbconnection.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -21,7 +21,7 @@ class NotifcaitonService:
 		for record in cursor:
 			response.append(
 				{
-					'notification_id': record[0],
+					'id': record[0],
 					'notification_type': record[1],
 					'content': record[2],
 					'is_viewed': record[3],
@@ -38,7 +38,7 @@ class NotifcaitonService:
 		con = self.service.dbconnection.connection
 		
 		try:
-			print('HTTP POST: /notifcaiton')
+			print('HTTP POST: /notification')
 			print(req.media)
 			cursor = con.cursor()
 			cursor.execute(QUERY_UPDATE_NOTIFCATIONS, (req.media['notification_id'],))
