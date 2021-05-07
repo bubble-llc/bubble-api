@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS "Notification"(
 	"NotificationID" BIGSERIAL PRIMARY KEY,
 	"UserID" BIGINT REFERENCES "Users",
 	"NotifcationTypeID" VARCHAR(256),
-	"NotifcationContent " VARCHAR(256),
+	"NotifcationContent" VARCHAR(256),
 	"IsViewed" BOOLEAN DEFAULT false,
 	"DateCreated" timestamptz NOT NULL,
 	"DateViewed" timestamptz

@@ -21,6 +21,7 @@ from app.services.twilio_sms import TwilioSMS
 from app.services.validate_twilio_sms import ValidateTwilioSMS
 from app.services.set_default_category import SetDefaultCategoryService
 from app.services.block_user import BlockUserService
+from app.services.notification import NotificationService
 
 
 class Service:
@@ -47,6 +48,7 @@ def start_service():
 	validate_password_reset = ValidatePasswordResetService(service)
 	set_default_category = SetDefaultCategoryService(service)
 	block_user = BlockUserService(service)
+	notification = NotificationService(service)
 	# twilio_sms = TwilioSMS(service)
 	# validate_twilio_sms = ValidateTwilioSMS(service)
 
@@ -66,6 +68,7 @@ def start_service():
 	app.add_route('/validate_password_reset', validate_password_reset)
 	app.add_route('/set_default_category', set_default_category)
 	app.add_route('/block_user', block_user)
+	app.add_route('/notification', notification)
 	# app.add_route('/twilio_sms', twilio_sms)
 	# app.add_route('/validate_twilio_sms', validate_twilio_sms)
 	return app

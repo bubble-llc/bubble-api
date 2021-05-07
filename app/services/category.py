@@ -17,7 +17,7 @@ class CategoryService:
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_CATEGORY, (req.params['user_id'], req.params['category_id']))
+		cursor.execute(QUERY_GET_CATEGORY, (req.params['user_id'], req.params['category_id'], req.params['user_id']))
 		
 		response = []
 		for record in cursor:
