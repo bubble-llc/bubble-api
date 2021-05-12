@@ -59,10 +59,11 @@ class FeedbackService:
 		try:
 			print('HTTP POST: /feedback')
 			print(req.media)
-			
+			token = req.headers['AUTHORIZATION']
+			decode = self.service.jwt.decode_auth_token(token)
 			cursor = con.cursor()
 			cursor.execute(QUERY_INSERT_FEEDBACK, (
-				req.media['user_id'],
+				decode['user_id'],
 				req.media['content'],
 				Decimal(req.media['latitude']),
 				Decimal(req.media['longitude']),

@@ -17,11 +17,13 @@ class VoteService:
 			print('HTTP POST: /vote')
 			cursor = con.cursor()
 			print(req.media)
+			token = req.headers['AUTHORIZATION']
+			decode = self.service.jwt.decode_auth_token(token)
 			if req.media['vote_type'] == "post":
 				if req.media['is_voted'] == False:
 					cursor.execute(QUERY_INSERT_POST_VOTE, (
 							req.media['post_id'],
-							req.media['username'],
+							decode['user_id'],
 							req.media['direction'],
 							datetime.now(tz=timezone.utc)
 						)
@@ -31,14 +33,14 @@ class VoteService:
 						req.media['direction'],
 						datetime.now(tz=timezone.utc),
 						req.media['post_id'],
-						req.media['username']
+						decode['user_id']
 						)
 					)
 			elif req.media['vote_type'] == "comment":
 				if req.media['is_voted'] == False:
 					cursor.execute(QUERY_INSERT_COMMENT_VOTE, (
 							req.media['comment_id'],
-							req.media['username'],
+							decode['user_id'],
 							req.media['direction'],
 							datetime.now(tz=timezone.utc)
 						)
@@ -48,7 +50,7 @@ class VoteService:
 						req.media['direction'],
 						datetime.now(tz=timezone.utc),
 						req.media['comment_id'],
-						req.media['username']
+						decode['user_id']
 						)
 					)
 			con.commit()

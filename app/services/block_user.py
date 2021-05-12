@@ -44,9 +44,11 @@ class BlockUserService:
 			print('HTTP POST: /block_user')
 			print(req.media)
 			
+			token = req.headers['AUTHORIZATION']
+			decode = self.service.jwt.decode_auth_token(token)
 			cursor = con.cursor()
 			cursor.execute(QUERY_INSERT_BLOCK_USER, (
-				req.media['user_id'],
+				decode['user_id'],
 				req.media['blocked_user_id'],
 				req.media['blocked_reason'],
 				req.media['blocked_type'],

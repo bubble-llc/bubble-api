@@ -18,9 +18,11 @@ class SetDefaultCategoryService:
 			print('HTTP POST: /set_default_category')
 			print(req.media)
 			cursor = con.cursor()
+			token = req.headers['AUTHORIZATION']
+			decode = self.service.jwt.decode_auth_token(token)
 			cursor.execute(QUERY_UPDATE_DEFAULT_CATEGORY, (
 				req.media['default_category_id'],
-				req.media['username']
+				decode['user_id']
 				)
 			)
 			con.commit()
