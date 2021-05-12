@@ -27,6 +27,7 @@ yarn-error.log*
 db_credentials.yaml
 email_credentials.yaml
 twilio_credentials.yaml
+jwt_credentials.yaml
 
 # design 
 design

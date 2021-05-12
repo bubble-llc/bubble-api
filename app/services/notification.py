@@ -16,7 +16,9 @@ class NotificationService:
 		print(req.params)
 		self.service.dbconnection.init_db_connection()
 		cursor = self.service.dbconnection.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_NOTIFCATIONS, (req.params['user_id'],))
+		token = req.params['token']
+		decode = self.service.jwt.decode_auth_token(token)
+		cursor.execute(QUERY_GET_NOTIFCATIONS, (decode['user_id'],))
 		response = []
 		for record in cursor:
 			response.append(

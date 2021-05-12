@@ -79,11 +79,12 @@ class ContentReviewService:
 		try:
 			print('HTTP POST: /content_review')
 			print(req.media)
-			
+			token = req.headers['AUTHORIZATION']
+			decode = self.service.jwt.decode_auth_token(token)
 			cursor = con.cursor()
 			if req.media['content_type'] == 'post':
 				cursor.execute(QUERY_UPDATE_POST_REVIEW, (
-					req.media['user_id'],
+					decode['user_id'],
 					req.media['content'],
 					datetime.now(tz=timezone.utc),
 					req.media['post_id'],
@@ -92,7 +93,7 @@ class ContentReviewService:
 				)
 			elif req.media['content_type'] == 'comment':
 				cursor.execute(QUERY_UPDATE_COMMENT_REVIEW, (
-					req.media['user_id'],
+					decode['user_id'],
 					req.media['content'],
 					datetime.now(tz=timezone.utc),
 					req.media['comment_id'],

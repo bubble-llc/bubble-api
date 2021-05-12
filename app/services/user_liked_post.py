@@ -18,7 +18,9 @@ class UserLikedPostService:
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_USER_LIKED_POST, (req.params['user_id'], ))
+		token = req.params['token']
+		decode = self.service.jwt.decode_auth_token(token)
+		cursor.execute(QUERY_GET_USER_LIKED_POST, (decode['user_id'], ))
 		
 		response = []
 		for record in cursor:

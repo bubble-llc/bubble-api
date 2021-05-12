@@ -433,7 +433,7 @@ QUERY_UPDATE_DEFAULT_CATEGORY = """
 		"Users"
 	SET
 		"DefaultCategoryID" = %s
-	WHERE "UserName" = %s;
+	WHERE "UserID" = %s;
 """
 
 QUERY_INSERT_TWILO_SMS = """

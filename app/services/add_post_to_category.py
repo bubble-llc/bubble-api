@@ -1,6 +1,7 @@
 import falcon
 import base64
 import sys
+import jwt
 import psycopg2.extras
 from decimal import Decimal
 from datetime import datetime, timezone
@@ -15,22 +16,24 @@ class AddPostService:
 	def on_post(self, req, resp):
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
-		
+
 		try:
 			print('HTTP POST: /add_post_to_category')
 			print(req.media)
-			
-			cursor = con.cursor()
-			cursor.execute(QUERY_INSERT_POST_TO_CATEGORY, (
-				req.media['user_id'],
-				req.media['category_id'],
-				req.media['title'],
-				req.media['content'],
-				Decimal(req.media['latitude']),
-				Decimal(req.media['longitude']),
-				datetime.now(tz=timezone.utc)
+			token = req.headers['AUTHORIZATION']
+			decode = self.service.jwt.decode_auth_token(token)
+			if decode:
+				cursor = con.cursor()
+				cursor.execute(QUERY_INSERT_POST_TO_CATEGORY, (
+					decode['user_id'],
+					req.media['category_id'],
+					req.media['title'],
+					req.media['content'],
+					Decimal(req.media['latitude']),
+					Decimal(req.media['longitude']),
+					datetime.now(tz=timezone.utc)
+					)
 				)
-			)
 			con.commit()
 			cursor.close()
 

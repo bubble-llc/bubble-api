@@ -16,7 +16,9 @@ class CommentService:
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_COMMENT, (req.params['user_id'], req.params['post_id'], req.params['user_id']))
+		token = req.params['token']
+		decode = self.service.jwt.decode_auth_token(token)
+		cursor.execute(QUERY_GET_COMMENT, (decode['user_id'], req.params['post_id'], decode['user_id']))
 		response = []
 		for record in cursor:
 			response.append(
@@ -45,9 +47,10 @@ class CommentService:
 			print('HTTP POST: /comment')
 			cursor = con.cursor()
 			print(req.media)
-			
+			token = req.headers['AUTHORIZATION']
+			decode = self.service.jwt.decode_auth_token(token)
 			cursor.execute(QUERY_INSERT_COMMENT, (
-					req.media['user_id'],
+					decode['user_id'],
 					req.media['content'],
 					datetime.now(tz=timezone.utc),
 					req.media['post_id'],
