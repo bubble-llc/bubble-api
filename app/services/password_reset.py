@@ -22,7 +22,7 @@ class PasswordResetService:
 			cursor = con.cursor()
 			cursor.execute(QUERY_INSERT_PASSWORD_RESET, (
 				random_str,
-                req.media['email']
+                req.media['email'].lower()
 				)
 			)
 			con.commit()

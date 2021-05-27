@@ -23,7 +23,7 @@ class CreateUserService:
 				req.media['username'],
 				req.media['user_type'],
 				req.media['password'],
-				req.media['email'],
+				req.media['email'].lower(),
 				random_str,
 				datetime.now(tz=timezone.utc)
 				)
@@ -32,7 +32,7 @@ class CreateUserService:
 			
 			resp.status = falcon.HTTP_200
 			resp.media = 'Successful creation of user: {}'.format(req.media['username'])
-			self.service.email_server.send_email_validation(req.media['username'],req.media['email'],random_str)
+			self.service.email_server.send_email_validation(req.media['username'],req.media['email'].lower(),random_str)
 
 		except psycopg2.DatabaseError as e:
 			if con:

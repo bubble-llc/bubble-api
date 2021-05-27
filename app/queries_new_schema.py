@@ -420,6 +420,14 @@ QUERY_INSERT_PASSWORD_RESET = """
 	WHERE "Email" = %s;
 """
 
+QUERY_CHECK_PASSWORD_RECOVERY_CODE = """
+	SELECT 
+		u."Email"
+	FROM 
+		"Users" u
+	WHERE u."Email" = %s AND "PasswordValidationCode" = %s;
+"""
+
 QUERY_UPDATE_PASSWORD_RESET = """
 	UPDATE 
 		"Users"
@@ -518,4 +526,20 @@ QUERY_GET_BLOCK_USER = """
 	WHERE bu."IsActive" = true AND bu."UserID" = %s
 	ORDER BY
 		bu."DateCreated" DESC;
+"""
+
+QUERY_GET_USERNAME = """
+	SELECT 
+		u."UserName"
+	FROM 
+		"Users" u
+	WHERE u."UserName" = %s
+"""
+
+QUERY_GET_EMAIL = """
+	SELECT 
+		u."Email"
+	FROM 
+		"Users" u
+	WHERE u."Email" = %s
 """

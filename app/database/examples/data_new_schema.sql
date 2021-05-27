@@ -355,6 +355,19 @@ INSERT INTO "Users"
 VALUES
     ('TheBigSheesh', 1, 'secure', 'neil@bubble.llc', '1234', 'true', NOW());
 
+INSERT INTO "Users"
+    (
+    "UserName",
+    "UserTypeID",
+    "UserPassword",
+    "Email",
+    "ValidationCode",
+    "IsValidated",
+    "DateCreated"
+    )
+VALUES
+    ('Zanyboy', 1, 'Zane7214', 'Zane.a.ritter@gmail.com', '1234', 'true', NOW());
+
 INSERT INTO "Post"
     (
     "UserID",
