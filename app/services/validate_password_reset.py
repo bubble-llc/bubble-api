@@ -20,8 +20,8 @@ class ValidatePasswordResetService:
 			cursor = con.cursor()
 			cursor.execute(QUERY_UPDATE_PASSWORD_RESET, (
 				req.media['password'],
-				req.media['email'],
-				req.media['validation_code']
+				req.media['email'].lower(),
+				req.media['recovery_code']
 				)
 			)
 			con.commit()

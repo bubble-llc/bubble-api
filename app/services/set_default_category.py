@@ -28,7 +28,7 @@ class SetDefaultCategoryService:
 			con.commit()
 			
 			resp.status = falcon.HTTP_200
-			resp.media = 'Success, defauly category id for {} is now {}'.format(req.media['username'],req.media['default_category_id'])
+			resp.media = 'Success, defauly category id for {} is now {}'.format(decode['user_id'],req.media['default_category_id'])
 
 		except psycopg2.DatabaseError as e:
 			if con:

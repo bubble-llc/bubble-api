@@ -62,14 +62,14 @@ class EmailServer:
 
 	def send_password_recovery(self, email, verificaiton_code):
 		msg = MIMEMultipart("alternative")
-		msg['Subject'] = "Bubble Password Reset"
+		msg['Subject'] = "Bubble Password Recovery"
 		msg['From'] = "Bubble Support <{}>".format(self.config['email'])
 		msg['To'] = email
 		
 		
 		text = """
-		Please use the validation code below to reset your password.
-		Password Reset Code: {}
+		Please use the validation code below to recovery your password.
+		Password Recovery Code: {}
 		
 		Thanks,
 		
@@ -78,8 +78,8 @@ class EmailServer:
 		html = """
 		<html>
 		<body>
-			<p>Please use the validation code below to reset your password.<br><br>
-			Password Reset Code: {}<br><br>
+			<p>Please use the validation code below to recovery your password.<br><br>
+			Password Recovery Code: {}<br><br>
 			Thanks,<br><br>
 			Bubble Team
 			</p>
