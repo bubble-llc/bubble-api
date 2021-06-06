@@ -76,6 +76,8 @@ CREATE TABLE IF NOT EXISTS "Post"(
 	"IsEdited" BOOLEAN DEFAULT false	
 );
 
+SELECT AddGeometryColumn('public','Post','Geom',4326,'POINT',2);
+
 CREATE TABLE IF NOT EXISTS "PostComment"(
 	"PostCommentID" BIGSERIAL PRIMARY KEY,
 	"PostCommentKey" UUID NOT NULL DEFAULT uuid_generate_v4(),

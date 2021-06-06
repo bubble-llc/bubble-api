@@ -376,10 +376,16 @@ INSERT INTO "Post"
     "PostContent",
     "Latitude",
     "Longitude",
-    "DateCreated"
+    "DateCreated",
+    "Geom"
     )
 VALUES
-    (2, 1, 'Trader Joe’s', 'To my steak lovers, Trader Joe’s has a great buy 2 get 1 free deal on Sirloins', '10.2', '50.9', NOW());
+    (2, 1, 'Trader Joe’s', 'To my steak lovers, Trader Joe’s has a great buy 2 get 1 free deal on Sirloins', '30.2766', '-97.755', NOW(), ST_SetSRID(
+        ST_MakePoint(
+            '-97.755',
+             '30.2766'
+        ), 4326)
+);
 
 INSERT INTO "Post"
     (
@@ -389,10 +395,16 @@ INSERT INTO "Post"
     "PostContent",
     "Latitude",
     "Longitude",
-    "DateCreated"
+    "DateCreated",
+    "Geom"
     )
 VALUES
-    (3, 1, 'Torchys', 'Torchys is giving away free queso when you buy 2 tacos or more!', '10.2', '50.9', NOW());
+    (3, 1, 'Torchys', 'Torchys is giving away free queso when you buy 2 tacos or more!', '30.2699', '-97.7479', NOW(), ST_SetSRID(
+        ST_MakePoint(
+            '-97.7479',
+             '30.2699'
+        ), 4326)
+);
 
 INSERT INTO "Post"
     (
@@ -402,10 +414,17 @@ INSERT INTO "Post"
     "PostContent",
     "Latitude",
     "Longitude",
-    "DateCreated"
+    "DateCreated",
+    "Geom"
     )
 VALUES
-    (4, 1, 'Downtown', 'Hello I am looking for a place that has good rates on downtown segway tours. Does anyone have suggestions?', '10.2', '50.9', NOW());
+    (4, 1, 'Downtown', 'Hello I am looking for a place that has good rates on downtown segway tours. Does anyone have suggestions?', '30.2781', '-97.7578', NOW(), ST_SetSRID(
+        ST_MakePoint(
+            '-97.7578',
+             '30.2781'
+             
+        ), 4326)
+);
 
 INSERT INTO "Post"
     (
@@ -415,7 +434,8 @@ INSERT INTO "Post"
     "PostContent",
     "Latitude",
     "Longitude",
-    "DateCreated"
+    "DateCreated",
+    "Geom"
     )
 VALUES
     (5, 1, 'Anywhere', 'Does anyone know the best place to find good deals on jeans?', '10.2', '50.9', NOW());
@@ -431,7 +451,12 @@ INSERT INTO "Post"
     "DateCreated"
     )
 VALUES
-    (6, 4, 'Parmer', 'Did yall see the crash on 35 and Parmer today?', '10.2', '50.9', NOW());
+    (6, 4, 'Parmer', 'Did yall see the crash on 35 and Parmer today?', '10.2', '50.9', NOW(), ST_SetSRID(
+        ST_MakePoint(
+             '10.2',
+             '50.9'
+        ), 4326)
+);
 
 INSERT INTO "Post"
     (

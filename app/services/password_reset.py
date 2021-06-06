@@ -30,7 +30,7 @@ class PasswordResetService:
 			if cursor.rowcount == 1:
 				resp.status = falcon.HTTP_200
 				resp.media = 'Password reset has been intiated for {}'.format(req.media['email'])
-				self.service.email_server.send_password_recovery(req.media['email'],random_str)
+				self.service.email_server.send_password_recovery(req.media['email'].lower(),random_str)
 			else:
 				resp.status = falcon.HTTP_400
 				resp.media = '{} does not exist'.format(req.media['email'])
