@@ -444,6 +444,22 @@ QUERY_UPDATE_DEFAULT_CATEGORY = """
 	WHERE "UserID" = %s;
 """
 
+QUERY_UPDATE_USERNAME = """
+	UPDATE 
+		"Users"
+	SET
+		"UserName" = %s
+	WHERE "UserID" = %s;
+"""
+
+QUERY_UPDATE_PASSWORD = """
+	UPDATE 
+		"Users"
+	SET
+		"UserPassword" = %s
+	WHERE "UserID" = %s;
+"""
+
 QUERY_INSERT_TWILO_SMS = """
 	INSERT INTO "TwilioLookup"(
 		"SID",

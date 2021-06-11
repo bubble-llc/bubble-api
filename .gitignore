@@ -24,6 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # configs
+db_credentials_new.yaml
 db_credentials.yaml
 email_credentials.yaml
 twilio_credentials.yaml

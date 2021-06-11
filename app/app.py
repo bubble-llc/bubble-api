@@ -17,6 +17,7 @@ from app.services.user_liked_post import UserLikedPostService
 from app.services.user_created_post import UserCreatedPostService
 from app.services.set_default_category import SetDefaultCategoryService
 from app.services.block_user import BlockUserService
+from app.services.user_update_setting import UserUpdateSettingService
 
 from app.services.email_validation import EmailValidationService
 from app.services.password_reset import PasswordResetService
@@ -58,6 +59,7 @@ def start_service():
 	user_created_post_service = UserCreatedPostService(service)
 	set_default_category = SetDefaultCategoryService(service)
 	block_user = BlockUserService(service)
+	user_update_setting = UserUpdateSettingService(service)
 
 	email_validation_service = EmailValidationService(service)
 	password_reset = PasswordResetService(service)
@@ -85,6 +87,7 @@ def start_service():
 	app.add_route('/user_created_post', user_created_post_service)
 	app.add_route('/set_default_category', set_default_category)
 	app.add_route('/block_user', block_user)
+	app.add_route('/user_update_setting', user_update_setting)
 
 	app.add_route('/email_validation', email_validation_service)
 	app.add_route('/password_reset', password_reset)
