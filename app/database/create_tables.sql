@@ -205,5 +205,6 @@ CREATE TABLE IF NOT EXISTS "BlockedUser"(
 	"DateCreated" timestamptz NOT NULL,
 	"DateModified" timestamptz,
 	"BlockedReason" VARCHAR(256),
-	"BlockedType" VARCHAR(256)
+	"BlockedType" VARCHAR(256),
+	PRIMARY KEY("UserID", "BlockedUserID")
 );

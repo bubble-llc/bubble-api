@@ -58,7 +58,7 @@ QUERY_GET_CATEGORY = """
 		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
 	LEFT OUTER JOIN 
 		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
-	WHERE "Post"."CategoryID" = %s AND "Post"."IsActive" = true AND "Post"."IsReported" = false AND "Post"."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s)
+	WHERE "Post"."CategoryID" = %s AND "Post"."IsActive" = true AND "Post"."IsReported" = false AND "Post"."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s AND "IsActive" = true)
 	ORDER BY
 		"DateCreated" DESC;
 """
@@ -528,17 +528,31 @@ QUERY_INSERT_BLOCK_USER = """
 		"BlockedType",
 		"DateCreated"
 	)
-	VALUES (%s, %s, %s, %s, %s);
+	VALUES (%s, %s, %s, %s, %s)
+	ON CONFLICT ("UserID","BlockedUserID") DO UPDATE SET "IsActive" = true;
+"""
+
+QUERY_UPDATE_UNBLOCK_USER = """
+	UPDATE 
+		"BlockedUser"
+	SET
+		"IsActive" = false,
+		"DateModified" = %s
+	WHERE
+		"UserID" = %s AND "BlockedUserID" = %s
 """
 
 QUERY_GET_BLOCK_USER = """
 	SELECT 
 		bu."BlockedUserID",
 		bu."BlockedReason",
-		bu."BlockedType"
+		bu."BlockedType",
+		u."UserName"
 
 	FROM 
 		"BlockedUser" bu
+	LEFT JOIN "Users" u
+		ON u."UserID" = bu."BlockedUserID"
 	WHERE bu."IsActive" = true AND bu."UserID" = %s
 	ORDER BY
 		bu."DateCreated" DESC;

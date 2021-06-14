@@ -17,18 +17,24 @@ class BlockUserService:
 		
 		self.service.dbconnection.init_db_connection()
 		con = self.service.dbconnection.connection
+		token = req.params['token']
+		decode = self.service.jwt.decode_auth_token(token)
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_BLOCK_USER, (req.params['user_id'],))
+		cursor.execute(QUERY_GET_BLOCK_USER, (decode['user_id'],))
 		
 		response = []
+		id = 1
 		for record in cursor:
 			response.append(
 				{
-					'blocked_user_id': record[0],
+					'id': id,
+					'blocked_user_id': str(record[0]),
 					'blocked_reason': record[1],
-					'blocked_type': record[2]
+					'blocked_type': record[2],
+					'blocked_username': record[3],
 				}
 			)
+			id += 1
 		
 		cursor.close()
 		con.close()
