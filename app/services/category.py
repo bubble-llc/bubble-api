@@ -19,7 +19,7 @@ class CategoryService:
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		token = req.params['token']
 		decode = self.service.jwt.decode_auth_token(token)
-		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id']))
+		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id'], float(req.params['logitude']), float(req.params['latitude']), req.params['radius']))
 		
 		response = []
 		for record in cursor:

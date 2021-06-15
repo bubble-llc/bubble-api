@@ -25,6 +25,7 @@ from app.services.password_reset import PasswordResetService
 from app.services.validate_password_reset import ValidatePasswordResetService
 from app.services.validate_password_recovery_code import ValidatePasswordRecoveryCodeService
 
+from app.services.radius import RadiusService
 from app.services.category import CategoryService
 from app.services.add_post_to_category import AddPostService
 from app.services.remove_post_from_category import RemovePostService
@@ -68,6 +69,7 @@ def start_service():
 	validate_password_reset = ValidatePasswordResetService(service)
 	validate_password_recovery_code = ValidatePasswordRecoveryCodeService(service)
 
+	radius_service = RadiusService(service)
 	category_service = CategoryService(service)
 	add_post_service = AddPostService(service)
 	remove_post_service = RemovePostService(service)
@@ -97,6 +99,7 @@ def start_service():
 	app.add_route('/validate_password_reset', validate_password_reset)
 	app.add_route('/validate_password_recovery_code', validate_password_recovery_code)
 
+	app.add_route('/radius', radius_service)
 	app.add_route('/category', category_service)
 	app.add_route('/add_post_to_category', add_post_service)
 	app.add_route('/remove_post_from_category', remove_post_service)

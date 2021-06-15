@@ -33,6 +33,44 @@ QUERY_GET_USER_LIKED_POST = """
 		"DateCreated" DESC;
 """
 
+QUERY_GET_RADIUS = """
+	SELECT 
+		"Post"."PostID"
+	FROM 
+		"Post"
+	WHERE ST_DWithin("Post"."Geom", ST_GeomFromText('POINT(%s %s)', 4326)::geography, %s)
+"""
+
+QUERY_GET_USER_LIKED_POST = """
+	SELECT 
+		p."PostID",
+		p."UserID",
+		p."CategoryID",
+		p."PostTitle",
+		p."PostContent",
+		p."Latitude",
+		p."Longitude",
+		CASE WHEN pu."Direction" is NULL THEN false ELSE true END AS "IsVoted",
+		CASE WHEN pu."Direction" is NULL THEN 0 ELSE pu."Direction" END AS "PrevVote",
+		p."DateCreated",
+		COALESCE(ppc.cnt,0) AS "Comments",
+		COALESCE(puv.cnt,0) AS "Votes",
+		u."UserName"
+	FROM 
+		"Post" p
+	INNER JOIN "Post_User" pu
+		ON p."PostID" = pu."PostID"
+	LEFT JOIN "Users" u
+		ON u."UserID" = p."UserID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") ppc ON p."PostID" = ppc."PostID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON p."PostID" = puv."PostID"
+	WHERE pu."UserID" = %s AND pu."Direction" = 1
+	ORDER BY
+		"DateCreated" DESC;
+"""
+
 QUERY_GET_CATEGORY = """
 	SELECT 
 		"Post"."PostID",
@@ -59,6 +97,7 @@ QUERY_GET_CATEGORY = """
 	LEFT OUTER JOIN 
 		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
 	WHERE "Post"."CategoryID" = %s AND "Post"."IsActive" = true AND "Post"."IsReported" = false AND "Post"."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s AND "IsActive" = true)
+		AND ST_DWithin("Post"."Geom", ST_GeomFromText('POINT(%s %s)', 4326)::geography, %s)
 	ORDER BY
 		"DateCreated" DESC;
 """
