@@ -3,6 +3,7 @@ import base64
 import sys
 import psycopg2.extras
 from datetime import datetime, timezone
+from decimal import Decimal
 from falcon.http_status import HTTPStatus
 from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_GET_CATEGORY
 
@@ -19,7 +20,7 @@ class CategoryService:
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		token = req.params['token']
 		decode = self.service.jwt.decode_auth_token(token)
-		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id'], float(req.params['logitude']), float(req.params['latitude']), req.params['radius']))
+		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id'], Decimal(req.params['logitude']), Decimal(req.params['latitude']), req.params['radius']))
 		
 		response = []
 		for record in cursor:

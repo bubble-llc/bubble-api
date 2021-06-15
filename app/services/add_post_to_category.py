@@ -31,7 +31,9 @@ class AddPostService:
 					req.media['content'],
 					Decimal(req.media['latitude']),
 					Decimal(req.media['longitude']),
-					datetime.now(tz=timezone.utc)
+					datetime.now(tz=timezone.utc),
+					Decimal(req.media['longitude']),
+					Decimal(req.media['latitude']),
 					)
 				)
 			con.commit()

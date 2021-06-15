@@ -297,9 +297,10 @@ QUERY_INSERT_POST_TO_CATEGORY = """
 		"PostContent",
 		"Latitude",
 		"Longitude",
-		"DateCreated"
+		"DateCreated",
+		"Geom"
 	)
-	VALUES (%s, %s, %s, %s, %s, %s, %s);
+	VALUES (%s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326));
 """
 
 QUERY_INSERT_USER = """
