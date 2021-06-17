@@ -19,7 +19,7 @@ class RadiusService:
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		radius = float(req.params['radius'])
 		cursor.execute(QUERY_GET_RADIUS, (float(req.params['logitude']), float(req.params['latitude']), req.params['radius']))
-		minimal_post_density = 2
+		minimal_post_density = 1
 		response = []
 		records = cursor.fetchall()
 		while len(records) < minimal_post_density:
