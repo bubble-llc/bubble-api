@@ -43,7 +43,7 @@ from app.services.validate_twilio_sms import ValidateTwilioSMS
 class Service:
 	def __init__(self):
 		print('Initializing Bubble Service...')
-		self.dbconnection = DbConnection('db_credentials.yaml')
+		self.dbconnection = DbConnection('db_credentials_new.yaml')
 		self.email_server = EmailServer('email_credentials.yaml')
 		self.twilio_connection = TwilioConnection('twilio_credentials.yaml')
 		self.jwt = Jwt('jwt_credentials.yaml')
