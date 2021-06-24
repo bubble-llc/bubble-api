@@ -18,13 +18,19 @@ class RadiusService:
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		radius = float(req.params['radius'])
-		cursor.execute(QUERY_GET_RADIUS, (float(req.params['logitude']), float(req.params['latitude']), req.params['radius']))
+		
+		if req.params.get('longitude') is not None:
+			longitude = req.params['longitude']
+		else:
+			longitude = req.params['logitude']
+		
+		cursor.execute(QUERY_GET_RADIUS, (float(longitude), float(req.params['latitude']), req.params['radius']))
 		minimal_post_density = 1
 		response = []
 		records = cursor.fetchall()
 		while len(records) < minimal_post_density:
 			radius *= 2
-			cursor.execute(QUERY_GET_RADIUS, (float(req.params['logitude']), float(req.params['latitude']), radius))
+			cursor.execute(QUERY_GET_RADIUS, (float(longitude), float(req.params['latitude']), radius))
 			records = cursor.fetchall()
 		response = {
 			'radius': str(radius)

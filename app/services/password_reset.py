@@ -5,7 +5,7 @@ import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
 from app.util.random_generator import RandomGenerator
-from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_PASSWORD_RESET
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_PASSWORD_RESET, QUERY_GET_USERNAME
 class PasswordResetService:
 	def __init__(self, service):
 		print('Initializing Password Reset Service...')
@@ -28,9 +28,15 @@ class PasswordResetService:
 			con.commit()
 
 			if cursor.rowcount == 1:
+				cursor.execute(QUERY_GET_USERNAME, (
+					"",
+					req.media['email'].lower()
+					)
+				)
+				username = cursor.fetchone()[0]
 				resp.status = falcon.HTTP_200
 				resp.media = 'Password reset has been intiated for {}'.format(req.media['email'])
-				self.service.email_server.send_password_recovery(req.media['email'].lower(),random_str)
+				self.service.email_server.send_password_recovery(req.media['email'].lower(),username,random_str)
 			else:
 				resp.status = falcon.HTTP_400
 				resp.media = '{} does not exist'.format(req.media['email'])

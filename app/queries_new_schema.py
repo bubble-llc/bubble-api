@@ -3,42 +3,12 @@ QUERY_CHECK_CONNECTION = """
 """
 # need to create a join for comments and make comments a json list
 
-QUERY_GET_USER_LIKED_POST = """
-	SELECT 
-		p."PostID",
-		p."UserID",
-		p."CategoryID",
-		p."PostTitle",
-		p."PostContent",
-		p."Latitude",
-		p."Longitude",
-		CASE WHEN pu."Direction" is NULL THEN false ELSE true END AS "IsVoted",
-		CASE WHEN pu."Direction" is NULL THEN 0 ELSE pu."Direction" END AS "PrevVote",
-		p."DateCreated",
-		COALESCE(ppc.cnt,0) AS "Comments",
-		COALESCE(puv.cnt,0) AS "Votes",
-		u."UserName"
-	FROM 
-		"Post" p
-	INNER JOIN "Post_User" pu
-		ON p."PostID" = pu."PostID"
-	LEFT JOIN "Users" u
-		ON u."UserID" = p."UserID"
-	LEFT OUTER JOIN 
-		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") ppc ON p."PostID" = ppc."PostID"
-	LEFT OUTER JOIN 
-		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON p."PostID" = puv."PostID"
-	WHERE pu."UserID" = %s AND pu."Direction" = 1
-	ORDER BY
-		"DateCreated" DESC;
-"""
-
 QUERY_GET_RADIUS = """
 	SELECT 
 		"Post"."PostID"
 	FROM 
 		"Post"
-	WHERE ST_DWithin("Post"."Geom", ST_GeomFromText('POINT(%s %s)', 4326)::geography, %s)
+	WHERE ST_DWithin("Post"."Geom", ST_GeomFromText('POINT(%s %s)', 4326)::geography, %s) AND "Post"."IsActive" = true
 """
 
 QUERY_GET_USER_LIKED_POST = """
@@ -66,7 +36,7 @@ QUERY_GET_USER_LIKED_POST = """
 		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") ppc ON p."PostID" = ppc."PostID"
 	LEFT OUTER JOIN 
 		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON p."PostID" = puv."PostID"
-	WHERE pu."UserID" = %s AND pu."Direction" = 1
+	WHERE pu."UserID" = %s AND pu."Direction" = 1 AND p."IsActive" = true
 	ORDER BY
 		"DateCreated" DESC;
 """
@@ -83,8 +53,8 @@ QUERY_GET_CATEGORY = """
 		CASE WHEN "Post_User"."Direction" is NULL THEN false ELSE true END AS "IsVoted",
 		CASE WHEN "Post_User"."Direction" is NULL THEN 0 ELSE "Post_User"."Direction" END AS "PrevVote",
 		"Post"."DateCreated",
-		COALESCE(x.cnt,0) AS "Comments",
-		COALESCE(y.cnt,0) AS "Votes",
+		COALESCE(ppc.cnt,0) AS "Comments",
+		COALESCE(puv.cnt,0) AS "Votes",
 		"Users"."UserName"
 	FROM 
 		"Post"
@@ -93,10 +63,11 @@ QUERY_GET_CATEGORY = """
 	LEFT JOIN 
 		"Users" on "Users"."UserID" = "Post"."UserID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" pcc INNER JOIN "PostComment" pc
+		ON pcc."PostCommentID" = pc."PostCommentID" AND pc."IsActive" = true GROUP BY "PostID") ppc ON "Post"."PostID" = ppc."PostID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
-	WHERE "Post"."CategoryID" = %s AND "Post"."IsActive" = true AND "Post"."IsReported" = false AND "Post"."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s AND "IsActive" = true)
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON "Post"."PostID" = puv."PostID"
+	WHERE "Post"."CategoryID" = %s AND "Post"."IsActive" = true AND "Post"."IsReported" = false AND "Post"."IsActive" = true AND "Post"."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s AND "IsActive" = true)
 		AND ST_DWithin("Post"."Geom", ST_GeomFromText('POINT(%s %s)', 4326)::geography, %s)
 	ORDER BY
 		"DateCreated" DESC;
@@ -114,8 +85,8 @@ QUERY_GET_DELETED_POST = """
 		CASE WHEN "Post_User"."Direction" is NULL THEN false ELSE true END AS "IsVoted",
 		CASE WHEN "Post_User"."Direction" is NULL THEN 0 ELSE "Post_User"."Direction" END AS "PrevVote",
 		"Post"."DateCreated",
-		COALESCE(x.cnt,0) AS "Comments",
-		COALESCE(y.cnt,0) AS "Votes",
+		COALESCE(ppc.cnt,0) AS "Comments",
+		COALESCE(puv.cnt,0) AS "Votes",
 		"Users"."UserName"
 	FROM 
 		"Post"
@@ -124,9 +95,9 @@ QUERY_GET_DELETED_POST = """
 	LEFT JOIN 
 		"Users" on "Users"."UserID" = "Post"."UserID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") ppc ON "Post"."PostID" = ppc."PostID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON "Post"."PostID" = puv."PostID"
 	WHERE "Post"."IsActive" = false
 	ORDER BY
 		"DateCreated" DESC;
@@ -144,8 +115,8 @@ QUERY_GET_POST_REVIEW = """
 		CASE WHEN "Post_User"."Direction" is NULL THEN false ELSE true END AS "IsVoted",
 		CASE WHEN "Post_User"."Direction" is NULL THEN 0 ELSE "Post_User"."Direction" END AS "PrevVote",
 		"Post"."DateCreated",
-		COALESCE(x.cnt,0) AS "Comments",
-		COALESCE(y.cnt,0) AS "Votes",
+		COALESCE(ppc.cnt,0) AS "Comments",
+		COALESCE(puv.cnt,0) AS "Votes",
 		"Users"."UserName"
 	FROM 
 		"Post"
@@ -154,9 +125,9 @@ QUERY_GET_POST_REVIEW = """
 	LEFT JOIN 
 		"Users" on "Users"."UserID" = "Post"."UserID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") ppc ON "Post"."PostID" = ppc."PostID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON "Post"."PostID" = puv."PostID"
 	WHERE "Post"."IsReported" = true
 	ORDER BY
 		"DateCreated" DESC;
@@ -198,8 +169,8 @@ QUERY_GET_REPORTED_POST_REPORT = """
 		CASE WHEN "Post_User"."Direction" is NULL THEN false ELSE true END AS "IsVoted",
 		CASE WHEN "Post_User"."Direction" is NULL THEN 0 ELSE "Post_User"."Direction" END AS "PrevVote",
 		"Post"."DateCreated",
-		COALESCE(x.cnt,0) AS "Comments",
-		COALESCE(y.cnt,0) AS "Votes",
+		COALESCE(ppc.cnt,0) AS "Comments",
+		COALESCE(puv.cnt,0) AS "Votes",
 		"Users"."UserName"
 	FROM 
 		"Post"
@@ -208,9 +179,9 @@ QUERY_GET_REPORTED_POST_REPORT = """
 	LEFT JOIN 
 		"Users" on "Users"."UserID" = "Post"."UserID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") ppc ON "Post"."PostID" = ppc."PostID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON "Post"."PostID" = puv."PostID"
 	WHERE "Post"."IsReported" = true
 	ORDER BY
 		"DateCreated" DESC;
@@ -228,8 +199,8 @@ QUERY_GET_USER_CREATED_POST = """
 		CASE WHEN "Post_User"."Direction" is NULL THEN false ELSE true END AS "IsVoted",
 		CASE WHEN "Post_User"."Direction" is NULL THEN 0 ELSE "Post_User"."Direction" END AS "PrevVote",
 		"Post"."DateCreated",
-		COALESCE(x.cnt,0) AS "Comments",
-		COALESCE(y.cnt,0) AS "Votes",
+		COALESCE(ppc.cnt,0) AS "Comments",
+		COALESCE(puv.cnt,0) AS "Votes",
 		"Users"."UserName"
 	FROM 
 		"Post"
@@ -238,10 +209,11 @@ QUERY_GET_USER_CREATED_POST = """
 	LEFT JOIN 
 		"Users" on "Users"."UserID" = "Post"."UserID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" GROUP BY "PostID") x ON "Post"."PostID" = x."PostID"
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" pcc INNER JOIN "PostComment" pc
+		ON pcc."PostCommentID" = pc."PostCommentID" AND pc."IsActive" = true GROUP BY "PostID") ppc ON "Post"."PostID" = ppc."PostID"
 	LEFT OUTER JOIN 
-		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") y ON "Post"."PostID" = y."PostID"
-	WHERE "Post"."UserID" = %s
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON "Post"."PostID" = puv."PostID"
+	WHERE "Post"."UserID" = %s AND "Post"."IsActive" = true
 	ORDER BY
 		"DateCreated" DESC;
 """
@@ -276,7 +248,7 @@ QUERY_GET_COMMENT = """
 	INNER JOIN "Post_PostComment" ppc
 		ON p."PostID" = ppc."PostID"
 	INNER JOIN "PostComment" pc
-		ON ppc."PostCommentID" = pc."PostCommentID"
+		ON ppc."PostCommentID" = pc."PostCommentID" AND pc."IsActive" = true
 	LEFT JOIN "Comment_User" cu
 		ON pc."PostCommentID" = cu."PostCommentID" AND "cu"."UserID" = %s
 	LEFT JOIN "Users" u
@@ -603,7 +575,7 @@ QUERY_GET_USERNAME = """
 		u."UserName"
 	FROM 
 		"Users" u
-	WHERE u."UserName" = %s
+	WHERE u."UserName" = %s OR u."Email" = %s
 """
 
 QUERY_GET_EMAIL = """
@@ -612,4 +584,22 @@ QUERY_GET_EMAIL = """
 	FROM 
 		"Users" u
 	WHERE u."Email" = %s
+"""
+
+QUERY_DELETE_POST = """
+	UPDATE 
+		"Post"
+	SET
+		"IsActive" = false
+	WHERE
+		"PostID" = %s
+"""
+
+QUERY_DELETE_COMMENT = """
+	UPDATE 
+		"PostComment"
+	SET
+		"IsActive" = false
+	WHERE
+		"PostCommentID" = %s
 """

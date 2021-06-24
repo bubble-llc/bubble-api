@@ -17,7 +17,7 @@ class CheckUsernameService:
 		con = self.service.dbconnection.connection
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		
-		cursor.execute(QUERY_GET_USERNAME, (req.params['username'],))
+		cursor.execute(QUERY_GET_USERNAME, (req.params['username'],""))
 
 		if cursor.fetchone() == None:
 			resp.status = falcon.HTTP_200

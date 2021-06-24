@@ -32,9 +32,11 @@ from app.services.remove_post_from_category import RemovePostService
 
 from app.services.vote import VoteService
 from app.services.comment import CommentService
-from app.services.notification import NotificationService
-from app.services.feedback import FeedbackService
+
 from app.services.content_review import ContentReviewService
+from app.services.content_delete import ContentDeleteService
+
+from app.services.feedback import FeedbackService
 from app.services.notification import NotificationService
 
 from app.services.twilio_sms import TwilioSMS
@@ -76,7 +78,10 @@ def start_service():
 	
 	vote_service = VoteService(service)
 	comment_service = CommentService(service)
+
 	content_review_service = ContentReviewService(service)
+	content_delete_service = ContentDeleteService(service)
+
 	feedback_service = FeedbackService(service)
 	notification = NotificationService(service)
 	
@@ -106,7 +111,10 @@ def start_service():
 
 	app.add_route('/vote', vote_service)
 	app.add_route('/comment', comment_service)
+
+	app.add_route('/content_delete', content_delete_service)
 	app.add_route('/content_review', content_review_service)
+
 	app.add_route('/feedback', feedback_service)
 	app.add_route('/notification', notification)
 	

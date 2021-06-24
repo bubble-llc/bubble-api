@@ -20,7 +20,13 @@ class CategoryService:
 		cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		token = req.params['token']
 		decode = self.service.jwt.decode_auth_token(token)
-		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id'], Decimal(req.params['logitude']), Decimal(req.params['latitude']), req.params['radius']))
+		
+		if req.params.get('longitude') is not None:
+			longitude = req.params['longitude']
+		else:
+			longitude = req.params['logitude']
+
+		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id'], Decimal(longitude), Decimal(req.params['latitude']), req.params['radius']))
 		
 		response = []
 		for record in cursor:
