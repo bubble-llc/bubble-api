@@ -21,7 +21,7 @@ class EmailServer:
 	def send_email_validation(self, username, email, verificaiton_code):
 		
 		# verification_link = "http://0.0.0.0:8000/email_validation?email={}&validation_code={}".format(email,verificaiton_code)
-		verification_link = "https://dashboard.stocksandshare.com/chitchat/email_validation?email={}&validation_code={}".format(email,verificaiton_code)
+		verification_link = "https://bubblemedia.info/email_validation?email={}&validation_code={}".format(email,verificaiton_code)
 		print(verification_link)
 		msg = MIMEMultipart("alternative")
 		msg['Subject'] = "Bubble Email Validation"
