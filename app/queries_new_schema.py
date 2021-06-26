@@ -258,7 +258,7 @@ QUERY_GET_COMMENT = """
 	WHERE
 		p."PostID" = %s AND pc."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s)
 	ORDER BY
-		pc."DateCreated" DESC;
+		pc."DateCreated" ASC;
 """
 
 QUERY_INSERT_POST_TO_CATEGORY = """
