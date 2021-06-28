@@ -256,7 +256,7 @@ QUERY_GET_COMMENT = """
 	LEFT OUTER JOIN 
 		(SELECT "PostCommentID", SUM("Direction") cnt FROM "Comment_User" GROUP BY "PostCommentID") cuv ON ppc."PostCommentID" = cuv."PostCommentID"
 	WHERE
-		p."PostID" = %s AND pc."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s)
+		p."PostID" = %s AND pc."UserID" NOT IN (SELECT "BlockedUserID" FROM "BlockedUser" WHERE "UserID" = %s AND "IsActive" = true)
 	ORDER BY
 		pc."DateCreated" ASC;
 """
