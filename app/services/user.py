@@ -22,10 +22,10 @@ class UserService:
 		user = cursor.fetchone()
 		if user:
 			response = {
-				'username': user[0],
+				'username': str(user[0]),
 				'user_id': str(user[1]),
-				'user_type': user[2],
-				'email': user[3],
+				'user_type': str(user[2]),
+				'email': str(user[3]),
 				'date_joined': str(user[4]),
 				'default_category_id': str(user[5])
 			}
