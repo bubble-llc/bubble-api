@@ -218,6 +218,44 @@ QUERY_GET_USER_CREATED_POST = """
 		"DateCreated" DESC;
 """
 
+QUERY_GET_NOTIFICATION_POST = """
+	SELECT 
+		n."NotificationID",
+		p."UserID",
+		p."CategoryID",
+		p."PostTitle",
+		p."PostContent",
+		p."Latitude",
+		p."Longitude",
+		CASE WHEN pu."Direction" is NULL THEN false ELSE true END AS "IsVoted",
+		CASE WHEN pu."Direction" is NULL THEN 0 ELSE pu."Direction" END AS "PrevVote",
+		p."DateCreated",
+		COALESCE(ppc.cnt,0) AS "Comments",
+		COALESCE(puv.cnt,0) AS "Votes",
+		u."UserName",
+		n."DateCreated",
+		n."NotifcationContent",
+		nu."UserName"
+	FROM 
+		"Post" p
+	LEFT JOIN "Post_User" pu
+		ON pu."PostID" = p."PostID" AND pu."UserID" = %s
+	LEFT JOIN "Notification" n 
+		ON n."PostID" = p."PostID"
+	LEFT JOIN "Users" u
+		ON u."UserID" = p."UserID"
+	LEFT JOIN "Users" nu
+		ON nu."UserID" = n."UserID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", count(*) cnt FROM "Post_PostComment" pcc INNER JOIN "PostComment" pc
+		ON pcc."PostCommentID" = pc."PostCommentID" AND pc."IsActive" = true GROUP BY "PostID") ppc ON p."PostID" = ppc."PostID"
+	LEFT OUTER JOIN 
+		(SELECT "PostID", SUM("Direction") cnt FROM "Post_User" GROUP BY "PostID") puv ON p."PostID" = puv."PostID"
+	WHERE p."UserID" = %s AND p."IsActive" = true AND n."IsActive" = true 
+	ORDER BY
+		n."DateCreated" DESC;
+"""
+
 QUERY_GET_USER = """
 	SELECT
 		"UserName",
@@ -517,19 +555,20 @@ QUERY_UPDATE_NOTIFCATIONS = """
 	UPDATE 
 		"Notification"
 	SET
-		"IsViewed" = true
+		"IsActive" = false
 	WHERE
 		"NotificationID" = %s
 """
 
-QUERY_INSERT_NOTIFCATIONS = """
+QUERY_INSERT_NOTIFCATIONS_COMMENTS = """
 	INSERT INTO "Notification"(
 		"UserID",
+		"PostID",
 		"NotifcationTypeID",
 		"NotifcationContent",
 		"DateCreated"
 	)
-	VALUES (%s, %s, %s, %s);
+	VALUES (%s, %s, %s, %s, %s);
 """
 
 QUERY_INSERT_BLOCK_USER = """

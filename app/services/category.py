@@ -55,7 +55,6 @@ class CategoryService:
 					'comments': record[10],
 					'votes': record[11],
 					'username': record[12]
-
 				}
 			)
 		cursor.close()

@@ -3,7 +3,7 @@ import sys
 import psycopg2.extras
 from datetime import datetime, timezone
 from falcon.http_status import HTTPStatus
-from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_COMMENT, QUERY_GET_COMMENT
+from app.queries_new_schema import QUERY_CHECK_CONNECTION, QUERY_INSERT_COMMENT, QUERY_GET_COMMENT, QUERY_INSERT_NOTIFCATIONS_COMMENTS
 
 class CommentService:
 	def __init__(self, service):
@@ -56,7 +56,17 @@ class CommentService:
 					req.media['post_id'],
 				)
 			)
-				
+			
+			if req.media['notify'] == True:
+				cursor.execute(QUERY_INSERT_NOTIFCATIONS_COMMENTS, (
+						decode['user_id'],
+						req.media['post_id'],
+						1,
+						req.media['content'],
+						datetime.now(tz=timezone.utc),
+					)
+				)
+
 			con.commit()
 
 			resp.status = falcon.HTTP_200

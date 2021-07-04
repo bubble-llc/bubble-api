@@ -17,7 +17,7 @@ class Jwt:
     def encode_auth_token(self, user_id, response):
         try:
             payload = {
-                'exp': datetime.utcnow() + timedelta(days=5, seconds=5),
+                'exp': datetime.utcnow() + timedelta(days=365),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }

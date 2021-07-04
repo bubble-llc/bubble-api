@@ -183,19 +183,20 @@ CREATE TABLE IF NOT EXISTS "TwilioLookup"(
 	"DateModified" timestamptz
 );
 
-CREATE TABLE IF NOT EXISTS "Notification"(
-	"NotificationID" BIGSERIAL PRIMARY KEY,
-	"UserID" BIGINT REFERENCES "Users",
-	"NotifcationTypeID" VARCHAR(256),
-	"NotifcationContent" VARCHAR(256),
-	"IsViewed" BOOLEAN DEFAULT false,
-	"DateCreated" timestamptz NOT NULL,
-	"DateViewed" timestamptz
-);
-
 CREATE TABLE IF NOT EXISTS "NotificationType"(
 	"NotifcationTypeID" BIGSERIAL PRIMARY KEY,
 	"NotifcationTypeName" VARCHAR(256)
+);
+
+CREATE TABLE IF NOT EXISTS "Notification"(
+	"NotificationID" BIGSERIAL PRIMARY KEY,
+	"UserID" BIGINT REFERENCES "Users",
+	"PostID" BIGINT REFERENCES "Post",
+	"NotifcationTypeID" BIGINT REFERENCES "NotificationType",
+	"NotifcationContent" VARCHAR(256),
+	"IsActive" BOOLEAN DEFAULT true,
+	"DateCreated" timestamptz NOT NULL,
+	"DateModified" timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS "BlockedUser"(
