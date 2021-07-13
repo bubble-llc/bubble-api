@@ -57,7 +57,7 @@ class CommentService:
 				)
 			)
 			
-			if req.media['notify'] == True:
+			if req.media.get('notify') is not None and req.media['notify'] == True:
 				cursor.execute(QUERY_INSERT_NOTIFCATIONS_COMMENTS, (
 						decode['user_id'],
 						req.media['post_id'],

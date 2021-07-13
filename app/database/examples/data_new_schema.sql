@@ -5,6 +5,13 @@ INSERT INTO "CategoryType"
 VALUES
     ('Main Categories');
 
+INSERT INTO "NotificationType"
+    (
+    "NotifcationTypeName"
+    )
+VALUES
+    ('Comment');
+
 INSERT INTO "Category"
     (
     "CategoryTypeID",
