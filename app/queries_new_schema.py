@@ -235,7 +235,8 @@ QUERY_GET_NOTIFICATION_POST = """
 		u."UserName",
 		n."DateCreated",
 		n."NotifcationContent",
-		nu."UserName"
+		nu."UserName",
+		p."PostID"
 	FROM 
 		"Post" p
 	LEFT JOIN "Post_User" pu
@@ -267,7 +268,7 @@ QUERY_GET_USER = """
 	FROM
 		"Users"
 	WHERE 
-		"UserName" = %s AND "UserPassword" = %s AND "IsValidated" = true;
+		("UserName" = %s OR "Email" = %s) AND "UserPassword" = %s AND "IsValidated" = true;
 		
 """
 

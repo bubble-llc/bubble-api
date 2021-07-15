@@ -49,7 +49,8 @@ class NotificationService:
 					'username': record[12],
 					'notificaiton_date_created': str(record[13]),
 					'notification_content': record[14],
-					'notificaiton_username': record[15]
+					'notificaiton_username': record[15],
+					'post_id': record[16]
 				}
 			)
 		cursor.close()

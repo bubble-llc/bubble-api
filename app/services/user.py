@@ -17,7 +17,7 @@ class UserService:
 		print(req.media)
 		self.service.dbconnection.init_db_connection()
 		cursor = self.service.dbconnection.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-		cursor.execute(QUERY_GET_USER, (req.media['username'], req.media['password']))
+		cursor.execute(QUERY_GET_USER, (req.media['username'], req.media['username'].lower(), req.media['password']))
 		response = {}
 		user = cursor.fetchone()
 		if user:

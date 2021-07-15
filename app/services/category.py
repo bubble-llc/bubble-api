@@ -25,8 +25,12 @@ class CategoryService:
 			longitude = req.params['longitude']
 		else:
 			longitude = req.params['logitude']
+		# Limiting content to only be pulled from Austin
+		latitude = 30.308841
+		longitude = -97.742522
+		radius = 20000
 
-		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id'], Decimal(longitude), Decimal(req.params['latitude']), req.params['radius']))
+		cursor.execute(QUERY_GET_CATEGORY, (decode['user_id'], req.params['category_id'], decode['user_id'], Decimal(longitude), Decimal(latitude), radius))
 		
 		response = []
 		for record in cursor:
@@ -39,10 +43,10 @@ class CategoryService:
 				longitude = 0.0
 			else:
 				longitude = record[6]
-			print(record)
 			response.append(
 				{
 					'id': record[0],
+					'post_id': record[0],
 					'user_id': record[1],
 					'category_id': record[2],
 					'title': record[3],

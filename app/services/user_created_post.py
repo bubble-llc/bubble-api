@@ -36,6 +36,7 @@ class UserCreatedPostService:
 			response.append(
 				{
 					'id': record[0],
+					'post_id': record[0],
 					'user_id': record[1],
 					'category_id': record[2],
 					'title': record[3],
