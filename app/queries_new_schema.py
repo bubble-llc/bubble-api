@@ -11,6 +11,14 @@ QUERY_GET_RADIUS = """
 	WHERE ST_DWithin("Post"."Geom", ST_GeomFromText('POINT(%s %s)', 4326)::geography, %s) AND "Post"."IsActive" = true
 """
 
+QUERY_CHECK_CITY = """
+	SELECT 
+		1
+	FROM 
+		"Post"
+	WHERE ST_DWithin(ST_SetSRID(ST_MakePoint(%s, %s), 4326), ST_GeomFromText('POINT(%s %s)', 4326)::geography, %s);
+"""
+
 QUERY_GET_USER_LIKED_POST = """
 	SELECT 
 		p."PostID",

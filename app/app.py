@@ -39,6 +39,7 @@ from app.services.content_delete import ContentDeleteService
 from app.services.feedback import FeedbackService
 from app.services.notification import NotificationService
 
+from app.services.check_city import CheckCityService
 from app.services.twilio_sms import TwilioSMS
 from app.services.validate_twilio_sms import ValidateTwilioSMS
 
@@ -84,6 +85,7 @@ def start_service():
 
 	feedback_service = FeedbackService(service)
 	notification = NotificationService(service)
+	check_city = CheckCityService(service)
 	
 	app = falcon.API(middleware=[HandleCORS()])
 
@@ -117,6 +119,7 @@ def start_service():
 
 	app.add_route('/feedback', feedback_service)
 	app.add_route('/notification', notification)
+	app.add_route('/check_city', check_city)
 	
 	return app
 
