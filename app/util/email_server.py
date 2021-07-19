@@ -1,5 +1,6 @@
 import smtplib
 import yaml
+import dkim
 from yaml import Loader
 from email.message import EmailMessage
 from email.mime.text import MIMEText
@@ -98,4 +99,18 @@ class EmailServer:
 		with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
 			smtp.login(self.config['email'], self.config['password'])
 
+			with open("/Users/steventran/bubblemedia.info.20210719.pem") as fh:
+				dkim_private_key = fh.read()
+			headers = [b"To", b"From", b"Subject"]
+			sig = dkim.sign(
+				message=msg.as_bytes(),
+				selector=str("20210719").encode(),
+				domain="bubblemedia.info".encode(),
+				privkey=dkim_private_key.encode(),
+				include_headers=headers,
+			)
+			# add the dkim signature to the email message headers.
+			# decode the signature back to string_type because later on
+			# the call to msg.as_string() performs it's own bytes encoding...
+			msg["DKIM-Signature"] = sig[len("DKIM-Signature: "):].decode()
 			smtp.send_message(msg)
